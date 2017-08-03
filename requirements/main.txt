@@ -1,2 +1,2 @@
 rieapie==0.0.7.3
-anyconfig
+anyconfig==0.9.3
