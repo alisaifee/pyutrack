@@ -12,7 +12,7 @@ To install YouTrack CLI, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install youtrack-cli
+    $ pip install pyoutrack
 
 This is the preferred method to install YouTrack CLI, as it will always install the most recent stable release. 
 
@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/alisaifee/youtrack-cli
+    $ git clone git://github.com/alisaifee/pyoutrack
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/alisaifee/youtrack-cli/tarball/master
+    $ curl  -OL https://github.com/alisaifee/pyoutrack/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/alisaifee/youtrack-cli
-.. _tarball: https://github.com/alisaifee/youtrack-cli/tarball/master
+.. _Github repo: https://github.com/alisaifee/pyoutrack
+.. _tarball: https://github.com/alisaifee/pyoutrack/tarball/master

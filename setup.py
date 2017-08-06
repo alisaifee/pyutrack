@@ -18,24 +18,24 @@ REQUIREMENTS = [
 ]
 
 setup(
-    name='youtrack-cli',
+    name='pyoutrack',
     version='0.1.0',
     description="Command line utility to interface with YouTrack",
     long_description=readme + '\n\n' + history,
     author="Ali-Akber Saifee",
     author_email='ali@indydevs.org',
-    url='https://github.com/alisaifee/youtrack-cli',
-    packages=find_packages(include=['youtrack_cli']),
+    url='https://github.com/alisaifee/pyoutrack',
+    packages=find_packages(include=['pyoutrack']),
     entry_points={
         'console_scripts': [
-            'youtrack-cli=youtrack_cli.cli:main'
+            'pyoutrack=pyoutrack.cli:main'
         ]
     },
     include_package_data=True,
     install_requires=REQUIREMENTS,
     license="MIT license",
     zip_safe=False,
-    keywords='youtrack-cli',
+    keywords='pyoutrack',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

@@ -1,5 +1,5 @@
-Welcome to YouTrack CLI's documentation!
-======================================
+Python YouTrack
+================
 
 Contents:
 

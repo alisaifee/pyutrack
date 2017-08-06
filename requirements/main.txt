@@ -1,2 +1,6 @@
-rieapie
 anyconfig
+click
+keyring
+requests
+six
+stringcase

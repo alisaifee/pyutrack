@@ -85,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/youtrack_cli.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/pyoutrack.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/youtrack_cli.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/pyoutrack.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/youtrack_cli"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/youtrack_cli"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/pyoutrack"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/pyoutrack"
 	@echo "# devhelp"
 
 epub:
