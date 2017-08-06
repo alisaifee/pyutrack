@@ -1,6 +1,6 @@
 anyconfig
 click
-keyring
+keyring==10.4.0
 requests
 six
 stringcase
