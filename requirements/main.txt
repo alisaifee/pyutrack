@@ -3,4 +3,4 @@ click
 keyring
 requests
 six
-stringcase
+stringcase==1.0.6
