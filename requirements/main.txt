@@ -1,5 +1,5 @@
 anyconfig
-click
+click==6.7
 keyring
 requests
 six
