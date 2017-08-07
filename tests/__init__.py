@@ -1,12 +1,23 @@
 import os
 import re
 import time
+import unittest
+
 import requests
 import subprocess
 
 import shutil
 
 from requests import RequestException
+
+from pyutrack import Credentials
+
+
+class PyutrackTest(unittest.TestCase):
+    def setUp(self):
+        credentials = Credentials(username='root')
+        credentials.reset_cookies()
+        credentials.reset_password()
 
 
 class YouTrackServer(object):
@@ -131,5 +142,3 @@ class YouTrackServer(object):
     def stop(self):
         if self.__proc:
             self.__proc.terminate()
-
-
