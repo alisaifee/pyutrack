@@ -107,6 +107,7 @@ class Connection(object):
             self.post('user/login', {'login': self.credentials.username, 'password': self.credentials.password}, False)
             self.credentials.cookies = self.__session.cookies.get_dict()
             self.credentials.persist()
+            return True
         except (PermissionsError,) as e:
             raise LoginError(e)
 

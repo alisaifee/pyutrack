@@ -5,6 +5,9 @@ python:
 
 install: pip install -r requirements/ci.txt
 script: nosetests --with-cov
+env:
+  - YOUTRACK_TEST_SERVER_VERSION=7.0.29566
+  - YOUTRACK_TEST_SERVER_VERSION=latest
 after_success:
     - codecov
 

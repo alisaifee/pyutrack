@@ -9,3 +9,4 @@ dist/
 htmlcov
 *egg-info*
 .python-version
+tests/tmp
