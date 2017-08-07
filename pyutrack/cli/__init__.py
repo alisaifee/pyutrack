@@ -1,8 +1,11 @@
 import logging
 
 import click
+from requests import RequestException
 
-from pyutrack import Credentials
+from pyutrack import Credentials, Connection
+from pyutrack.config import Config
+from pyutrack.errors import ApiError, LoginError, ResponseError
 
 
 @click.group()
@@ -28,11 +31,23 @@ def cli(ctx, base_url, username, password, debug):
         )
 
     if not ctx.obj.credentials.cookies:
-        print("but why")
         ctx.obj.login()
 
     if base_url:
         ctx.obj.api_url = base_url
 
 
-from . import new, show, update, delete, list
+from pyutrack.cli import new, show, update, delete, list
+
+
+def main():
+    config = Config()
+    connection = Connection(credentials=config.credentials)
+    if config.base_url:
+        connection.api_url = config.base_url
+    try:
+        cli(obj=connection, auto_envvar_prefix='YOUTRACK')
+    except (ApiError, LoginError, ResponseError) as e:
+        click.secho(str(e), fg='red')
+    except (RequestException,) as e:
+        click.secho(str(e), fg='red')

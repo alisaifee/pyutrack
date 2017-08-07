@@ -96,7 +96,7 @@ class Connection(object):
         self.__session.headers.update({'Accept': 'application/json'})
         self.__session_args = {}
         self.__credentials = credentials
-        if self.credentials.cookies:
+        if self.credentials and self.credentials.cookies:
             self.__session.cookies.update(credentials.cookies)
         self.__api_url = ''
         if base_url:

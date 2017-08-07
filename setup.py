@@ -25,7 +25,7 @@ setup(
     author="Ali-Akber Saifee",
     author_email='ali@indydevs.org',
     url='https://github.com/alisaifee/pyutrack',
-    packages=find_packages(include=['pyutrack']),
+    packages=find_packages(exclude=['tests']),
     entry_points={
         'console_scripts': [
             'pyu=pyutrack.cli:main'
