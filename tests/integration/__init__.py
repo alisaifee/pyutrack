@@ -8,6 +8,7 @@ SERVER = YouTrackServer()
 
 
 class IntegrationTest(unittest.TestCase):
+    integration = True
     @classmethod
     def setUpClass(cls):
         if not SERVER.running:
