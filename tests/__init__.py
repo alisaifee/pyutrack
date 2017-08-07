@@ -16,10 +16,12 @@ class YouTrackServer(object):
     def __init__(
             self,
             version=os.environ.get('YOUTRACK_TEST_SERVER_VERSION', 'latest'),
-            port=9876
+            port=9876,
+            verbose=False
     ):
         self.__port = port
         self.__proc = None
+        self.__verbose = verbose
         if version == 'latest':
             self.fetch_latest_version()
         else:
@@ -94,8 +96,8 @@ class YouTrackServer(object):
                 cmd.split(' '),
                 executable='java',
                 cwd=self.temp_dir,
-                #stdout=subprocess.PIPE,
-                #stderr=subprocess.PIPE
+                stdout=self.__verbose and subprocess.PIPE,
+                stderr=self.__verbose and subprocess.PIPE
             )
             if not self.wait_for_startup():
                 self.__proc.kill()
