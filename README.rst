@@ -17,6 +17,8 @@ YouTrack CLI
      :target: https://pyup.io/repos/github/alisaifee/pyutrack/
      :alt: Updates
 
+.. image:: https://codecov.io/gh/alisaifee/pyutrack/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/alisaifee/pyutrack
 
 Command line utility to interface with YouTrack
 
