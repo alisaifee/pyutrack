@@ -2,5 +2,5 @@
 nose2
 mock
 coverage
-nose-cov
+nose-cov==1.6
 hiro>0.1.6
