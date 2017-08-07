@@ -1,12 +1,12 @@
 ===
 API
 ===
-.. currentmodule:: pyoutrack
+.. currentmodule:: pyutrack
 
 REST Interface
 ==============
-.. automodule:: pyoutrack.connection
+.. automodule:: pyutrack.connection
 
 Resource Types
 ==============
-.. automodule:: pyoutrack.resources
+.. automodule:: pyutrack.resources

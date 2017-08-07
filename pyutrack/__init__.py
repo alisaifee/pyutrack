@@ -6,5 +6,5 @@ __author__ = """Ali-Akber Saifee"""
 __email__ = 'ali@indydevs.org'
 __version__ = '0.1.0'
 
-from pyoutrack.connection import Connection, Credentials
-from pyoutrack.resources import *
+from pyutrack.connection import Connection, Credentials
+from pyutrack.resources import *

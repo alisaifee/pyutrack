@@ -2,5 +2,7 @@ anyconfig
 click
 keyring
 requests
+retry
 six
 stringcase
+pyyaml

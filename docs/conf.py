@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# pyoutrack documentation build configuration file, created by
+# pyutrack documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul  9 22:26:36 2013.
 #
 # This file is execfile()d with the current directory set to its
@@ -31,7 +31,7 @@ project_root = os.path.dirname(cwd)
 # version is used.
 sys.path.insert(0, project_root)
 
-import pyoutrack
+import pyutrack
 
 # -- General configuration ---------------------------------------------
 
@@ -63,9 +63,9 @@ copyright = u"2017, Ali-Akber Saifee"
 # the built documents.
 #
 # The short X.Y version.
-version = pyoutrack.__version__
+version = pyutrack.__version__
 # The full version, including alpha/beta/rc tags.
-release = pyoutrack.__version__
+release = pyutrack.__version__
 autodoc_default_flags = ['members', 'undoc-members']
 
 # There are two options for replacing |today|: either, you set today to
@@ -185,7 +185,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pyoutrackdoc'
+htmlhelp_basename = 'pyutrackdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------
@@ -205,7 +205,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
 latex_documents = [
-    ('index', 'pyoutrack.tex',
+    ('index', 'pyutrack.tex',
      u'Python YouTrack Documentation',
      u'Ali-Akber Saifee', 'manual'),
 ]
@@ -236,7 +236,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pyoutrack',
+    ('index', 'pyutrack',
      u'Python YouTrack Documentation',
      [u'Ali-Akber Saifee'], 1)
 ]
@@ -251,11 +251,11 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'pyoutrack',
+    ('index', 'pyutrack',
      u'Python YouTrack Documentation',
      u'Ali-Akber Saifee',
-     'pyoutrack',
-     'One line description of project.',
+     'pyutrack',
+     'Python wrapper for YouTrack API.',
      'Miscellaneous'),
 ]
 

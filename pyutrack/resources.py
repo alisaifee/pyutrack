@@ -1,6 +1,6 @@
 import six
 
-from pyoutrack.util import Type
+from pyutrack.util import Type
 
 
 @six.add_metaclass(Type)
@@ -44,5 +44,5 @@ class Project(object):
 
     def issues(self):
         return [
-            Issue(**issue) for issue in self.connection.get('issue/byproject/%(id)s' % self.fields)
+            Issue(self.connection, **issue) for issue in self.connection.get('issue/byproject/%(id)s' % self.fields)
             ]

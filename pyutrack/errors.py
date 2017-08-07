@@ -21,8 +21,12 @@ class ApiError(Exception):
         super(ApiError, self).__init__("%s" % message)
 
 
-class PermissionError(ApiError):
-    CODES = [401, 403, 407, 429]
+class PermissionsError(ApiError):
+    CODES = [403, 407, 429]
+
+
+class AuthorizationError(ApiError):
+    CODES = [401]
 
 
 class InputError(ApiError):
@@ -32,6 +36,12 @@ class InputError(ApiError):
 class NotFoundError(ApiError):
     CODES = [404]
 
+
+class LoginError(Exception):
+    pass
+
+class ResponseError(Exception):
+    pass
 
 def response_to_exc(response):
     return ErrorRegistry.REGISTRY.get(response.status_code, ApiError)(response)

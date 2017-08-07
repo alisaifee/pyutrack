@@ -2,6 +2,6 @@
 Usage
 =====
 
-.. click:: pyoutrack.cli:cli
-   :prog: youtrack
+.. click:: pyutrack.cli:cli
+   :prog: pyu
    :show-nested:

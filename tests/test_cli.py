@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `pyoutrack` package."""
+"""Tests for `pyutrack` package."""
 
 
 import unittest
 from click.testing import CliRunner
 
-from pyoutrack import cli
+from pyutrack import cli
 
 
 class TestYoutrack_cli(unittest.TestCase):
 
     def test_improt(self):
-        import pyoutrack
+        import pyutrack
 
     def test_command_line_interface(self):
         runner = CliRunner()
