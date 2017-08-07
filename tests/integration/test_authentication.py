@@ -17,4 +17,4 @@ class AuthenticationTests(IntegrationTest):
             credentials=Credentials(username='root', password='rooted'),
             base_url='http://localhost:9876'
         )
-        self.assertRaises(connection.login, LoginError)
+        self.assertRaises(LoginError, connection.login)
