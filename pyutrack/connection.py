@@ -7,8 +7,8 @@ from pyutrack.errors import response_to_exc, AuthorizationError, LoginError, Per
 
 
 class Credentials(object):
-    KEYRING_COOKIE = 'youtrack-cli:cookies'
-    KEYRING_PASSWORD = 'youtrack-cli:password'
+    KEYRING_COOKIE = 'pyutrack:cookies'
+    KEYRING_PASSWORD = 'pyutrack:password'
 
     def __init__(self, username, password=None, cookies=None):
         self._username = username
