@@ -1,4 +1,4 @@
-anyconfig
+anyconfig==0.9.3
 click
 keyring
 requests
