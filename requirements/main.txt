@@ -5,4 +5,4 @@ requests
 retry
 six
 stringcase
-pyyaml
+pyyaml==3.12
