@@ -1,16 +1,20 @@
 language: python
 install: pip install -r requirements/ci.txt
-script: nose2 --with-cov $TEST_ARGS
+cache:
+  pip: true
+  directories:
+  - tests/tmp
 matrix:
   include:
   - python: "2.7"
-    env: TEST_ARGS=-A '!integration'
+    env: TEST_ARGS="-A '\!integration'"
   - python: "3.5"
-    env: TEST_ARGS=-A '!integration'
+    env: TEST_ARGS="-A '\!integration'"
   - python: "2.7"
     env: YOUTRACK_TEST_SERVER_VERSION=7.0.29566
   - python: "2.7"
     env: YOUTRACK_TEST_SERVER_VERSION=latest
+script: nose2 --with-cov $TEST_ARGS
 after_success:
     - codecov
 
