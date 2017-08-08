@@ -33,6 +33,7 @@ class YouTrackServer(object):
         self.__port = port
         self.__proc = None
         self.__verbose = verbose
+        self.__timeout = int(os.environ.get('YOUTRACK_TEST_SERVER_TIMEOUT', 120))
         if version == 'latest':
             self.fetch_latest_version()
         else:
@@ -113,8 +114,8 @@ class YouTrackServer(object):
             if not self.wait_for_startup():
                 self.__proc.kill()
                 raise Exception(
-                    "Unable to start youtrack %s on port %d" %
-                    (self.version, self.port)
+                    "Unable to start youtrack %s on port %d within %d seconds" %
+                    (self.version, self.port, self.__timeout)
                 )
 
     def save_database(self):
@@ -125,7 +126,6 @@ class YouTrackServer(object):
     def wait_for_startup(self):
         url = 'http://localhost:%d/rest/user/current' % self.port
         start = time.time()
-        timeout = int(os.environ.get('YOUTRACK_TEST_SERVER_TIMEOUT', 120))
 
         def _():
             try:
@@ -135,7 +135,7 @@ class YouTrackServer(object):
 
         while not _():
             time.sleep(1)
-            if time.time() - start > timeout:
+            if time.time() - start > self.__timeout:
                 return False
         return True
 
