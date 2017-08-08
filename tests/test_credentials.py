@@ -24,4 +24,15 @@ class CredentialsTests(PyutrackTest):
 
         )
 
+    def test_reload(self):
+        Credentials('root', 'passwd', {"key": "value"}).persist()
+        c = Credentials('root')
+        self.assertEqual(
+            keyring.get_password(Credentials.KEYRING_PASSWORD, 'root'), 'passwd'
+        )
+        self.assertEqual(
+            json.loads(keyring.get_password(Credentials.KEYRING_COOKIE, 'root')),
+            {"key": "value"}
+
+        )
 
