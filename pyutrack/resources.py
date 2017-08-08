@@ -5,44 +5,59 @@ from pyutrack.util import Type
 
 @six.add_metaclass(Type)
 class Issue(object):
-    __get__ = ('issue/%(id)s',)
-    __create__ = ('issue/', ('project',), {'summary': None, 'description': None})
-    __delete__ = ('issue/%(id)s',)
-    __update__ = ('issue/%(id)s/', (), {'summary': None, 'description': None})
-    __aliases__ = {'project': 'projectShortName'}
+    __get__ = {'url': 'issue/%(id)s'}
+    __create__ = {
+        'url': 'issue/',
+        'args': ('project',),
+        'kwargs': {
+            'summary': None,
+            'description':None
+        }
+    }
 
+    __delete__ = {'url': 'issue/%(id)s'}
+    __update__ = {'url':'issue/%(id)s/', 'kwargs': {'summary': None, 'description':None}}
+    __list__ = {'url': 'issue?%(filter)s', 'args': ('filter',), 'hydrate': 'False'}
+    __aliases__ = {'project': 'projectShortName'}
+    __render__ = ('id', 'summary', 'reporterName', 'updaterName', 'Priority')
+    __render_min__ = ('id', 'summary')
 
 # Admin types
 
 @six.add_metaclass(Type)
 class User(object):
-    __get__ = ('admin/user/%(login)s',)
-    __create__ = ('admin/user/', ('login', 'fullName', 'email', 'password'))
-    __delete__ = ('user/%(login)s',)
-    __update__ = ('admin/user/%(login)s', ('login',), {'fullName': None, 'email': None, 'password': None})
-    __list__ = ('admin/user',)
-
+    __get__ = {'url': 'admin/user/%(login)s'}
+    __create__ = {'url': 'admin/user/', 'args': ('login', 'fullName', 'email', 'password')}
+    __delete__ = {'url': 'user/%(login)s'}
+    __update__ = {'url': 'admin/user/%(login)s', 'args': ('login',), 'kwargs': {'fullName': None, 'email': None, 'password': None}}
+    __list__ = {'url': 'admin/user', 'hydrate': False}
+    __render__ = ('login', 'email')
 
 @six.add_metaclass(Type)
 class Group(object):
-    __get__ = ('admin/group/%(name)s',)
-    __create__ = ('admin/group/', ('description', 'autoJoin'))
-    __delete__ = ('group/%(name)s',)
-    __update__ = ('admin/group/%(name)s', ('description', 'autoJoin', 'newName'))
-    __list__ = ('admin/group',)
+    __get__ = {'url': 'admin/group/%(name)s'}
+    __create__ = {'url': 'admin/group/', 'args': ('description', 'autoJoin')}
+    __delete__ = {'url': 'group/%(name)s',}
+    __update__ = {'url': 'admin/group/%(name)s', 'args': ('description', 'autoJoin', 'newName')}
+    __list__ = {'url': 'admin/group', 'hydrate': True}
+    __render__ = ('name', 'description')
 
 
 @six.add_metaclass(Type)
 class Project(object):
-    __get__ = ('admin/project/%(projectId)s',)
-    __create__ = (
-        'admin/project/%(projectId)s', ('projectId', 'projectName', 'projectLeadLogin'),
-        {'startingNumber': 1, 'description': None})
-    __delete__ = ('admin/project/%(projectId)s',)
-    __list__ = ('project/all',)
+    __get__ = {'url': 'admin/project/%(projectId)s',}
+    __create__ = {
+        'url': 'admin/project/%(projectId)s', 'args': ('projectId', 'projectName', 'projectLeadLogin'),
+        'kwargs': {'startingNumber': 1, 'description': None} }
+    __delete__ = {'url': 'admin/project/%(projectId)s'}
+    __list__ = {'url': 'project/all', 'hydrate': False}
     __aliases__ = {'id': 'projectId', 'shortName': 'projectId'}
+    __render__ = ('id', 'name', 'lead')
+    __render_min__ = ('id', 'name')
 
     def issues(self):
         return [
-            Issue(self.connection, **issue) for issue in self.connection.get('issue/byproject/%(id)s' % self.fields)
-            ]
+            Issue(self.connection, **issue) for issue in
+            self.connection.get('issue/byproject/%(id)s' % self.fields)
+        ]
+

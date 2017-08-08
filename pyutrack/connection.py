@@ -12,10 +12,13 @@ class Credentials(object):
 
     def __init__(self, username, password=None, cookies=None):
         self._username = username
-        self._password = password
-        self._cookies = cookies
-        if not (cookies or password):
-            self.load_from_keyring()
+        self._cookies = None
+        self._password = None
+        self.load_from_keyring()
+        if password:
+            self._password = password
+        if cookies:
+            self._cookies = cookies
 
     @staticmethod
     def from_keyring(username):
