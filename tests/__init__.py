@@ -107,8 +107,8 @@ class YouTrackServer(object):
                 cmd.split(' '),
                 executable='java',
                 cwd=self.temp_dir,
-                stdout=self.__verbose and subprocess.PIPE,
-                stderr=self.__verbose and subprocess.PIPE
+                stdout=not self.__verbose and subprocess.PIPE,
+                stderr=not self.__verbose and subprocess.PIPE
             )
             if not self.wait_for_startup():
                 self.__proc.kill()
