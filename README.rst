@@ -1,6 +1,6 @@
-============
-YouTrack CLI
-============
+===============
+Python YouTrack
+===============
 
 
 .. image:: https://img.shields.io/pypi/v/pyutrack.svg
@@ -20,7 +20,7 @@ YouTrack CLI
 .. image:: https://codecov.io/gh/alisaifee/pyutrack/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/alisaifee/pyutrack
 
-Command line utility to interface with YouTrack
+Python bindings and command line utility to interface with YouTrack
 
 
 * Free software: MIT license
@@ -30,5 +30,6 @@ Command line utility to interface with YouTrack
 Features
 --------
 
-* TODO
+* Object oriented interface to the YouTrack REST API
+* Command line utility for routine interactions with YouTrack
 
