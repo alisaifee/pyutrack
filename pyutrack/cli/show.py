@@ -1,35 +1,41 @@
 import click
+from click import get_current_context
 
-from pyutrack import Issue
+from pyutrack import Issue, Project, User, Group
 from . import cli
-
 
 @cli.group()
 @click.pass_context
 def show(ctx):
     pass
 
+@show.resultcallback()
+def result(result):
+    get_current_context().obj.render(result)
 
 @show.command()
 @click.pass_context
 @click.argument('id')
 def issue(ctx, id):
-    print(Issue(ctx.obj, hydrate=True, id=id))
+    return Issue(ctx.obj.connection, hydrate=True, id=id)
 
 
 @show.command()
 @click.pass_context
-def project(ctx):
-    print(ctx.obj)
+@click.argument('id')
+def project(ctx, id):
+    return Project(ctx.obj.connection, hydrate=True, id=id)
 
 
 @show.command()
 @click.pass_context
-def user(ctx):
-    print(ctx.obj)
+@click.argument('login')
+def user(ctx, login):
+    return User(ctx.obj.connection, hydrate=True, login=login)
 
 
 @show.command()
 @click.pass_context
-def group(ctx):
-    print(ctx.obj)
+@click.argument('name')
+def group(ctx, name):
+    return Group(ctx.obj.connection, hydrate=True, name=name)

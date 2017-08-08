@@ -1,4 +1,5 @@
 import click
+from click import get_current_context
 
 from pyutrack import Issue, Project, User, Group
 from . import cli
@@ -9,28 +10,33 @@ from . import cli
 def list(ctx):
     pass
 
+@list.resultcallback()
+def result(result):
+    get_current_context().obj.render(result)
 
 @list.command()
 @click.pass_context
-@click.option('--project')
-def issues(ctx, project=None):
+@click.option('--project', default=None)
+@click.option('--filter', default=None)
+def issues(ctx, project, filter):
     if project:
-        click.echo(Project(ctx.obj, id=project).issues())
-
+        return Project(ctx.obj.connection, id=project).issues()
+    if filter:
+        return Issue.list(ctx.obj.connection, filter=filter)
 
 @list.command()
 @click.pass_context
 def projects(ctx):
-    click.echo(Project.list(ctx.obj))
+    return Project.list(ctx.obj.connection)
 
 
 @list.command()
 @click.pass_context
 def users(ctx):
-    click.echo(User.list(ctx.obj))
+    return User.list(ctx.obj.connection)
 
 
 @list.command()
 @click.pass_context
 def groups(ctx):
-    click.echo(Group.list(ctx.obj))
+    return Group.list(ctx.obj.connection)
