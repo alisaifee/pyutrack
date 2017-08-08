@@ -1,0 +1,11 @@
+[run]
+include = 
+    pyutrack/*
+omit =
+    /*/pyutrack/_version*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    noqa
+    raise NotImplementedError
