@@ -125,7 +125,7 @@ class YouTrackServer(object):
     def wait_for_startup(self):
         url = 'http://localhost:%d/rest/user/current' % self.port
         start = time.time()
-        timeout = 120
+        timeout = int(os.environ.get('YOUTRACK_TEST_SERVER_TIMEOUT', 120))
 
         def _():
             try:

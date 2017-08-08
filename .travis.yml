@@ -4,6 +4,8 @@ cache:
   pip: true
   directories:
   - tests/tmp
+env:
+  YOUTRACK_TEST_SERVER_TIMEOUT: 240
 matrix:
   include:
   - python: "2.7"
