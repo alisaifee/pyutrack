@@ -21,8 +21,7 @@ def result(result):
 def issues(ctx, project, filter):
     if project:
         return Project(ctx.obj.connection, id=project).issues()
-    if filter:
-        return Issue.list(ctx.obj.connection, filter=filter)
+    return Issue.list(ctx.obj.connection, filter=filter)
 
 @list.command()
 @click.pass_context

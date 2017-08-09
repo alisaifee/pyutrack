@@ -17,7 +17,10 @@ class Issue(object):
 
     __delete__ = {'url': 'issue/%(id)s'}
     __update__ = {'url':'issue/%(id)s/', 'kwargs': {'summary': None, 'description':None}}
-    __list__ = {'url': 'issue?%(filter)s', 'args': ('filter',), 'hydrate': 'False'}
+    __list__ = {
+        'url': 'issue?%(filter)s', 'args': ('filter',), 'hydrate': False,
+        'callback': lambda response: response['issue']
+    }
     __aliases__ = {'project': 'projectShortName'}
     __render__ = ('id', 'summary', 'reporterName', 'updaterName', 'Priority')
     __render_min__ = ('id', 'summary')
@@ -30,7 +33,7 @@ class User(object):
     __create__ = {'url': 'admin/user/', 'args': ('login', 'fullName', 'email', 'password')}
     __delete__ = {'url': 'user/%(login)s'}
     __update__ = {'url': 'admin/user/%(login)s', 'args': ('login',), 'kwargs': {'fullName': None, 'email': None, 'password': None}}
-    __list__ = {'url': 'admin/user', 'hydrate': False}
+    __list__ = {'url': 'admin/user', 'hydrate': True}
     __render__ = ('login', 'email')
 
 @six.add_metaclass(Type)
@@ -50,7 +53,7 @@ class Project(object):
         'url': 'admin/project/%(projectId)s', 'args': ('projectId', 'projectName', 'projectLeadLogin'),
         'kwargs': {'startingNumber': 1, 'description': None} }
     __delete__ = {'url': 'admin/project/%(projectId)s'}
-    __list__ = {'url': 'project/all', 'hydrate': False}
+    __list__ = {'url': 'project/all', 'hydrate': True}
     __aliases__ = {'id': 'projectId', 'shortName': 'projectId'}
     __render__ = ('id', 'name', 'lead')
     __render_min__ = ('id', 'name')

@@ -74,7 +74,7 @@ class Type(type):
             super(Type.Base, self).__setattr__('connection', connection)
             super(Type.Base, self).__setattr__('fields', Response(fields, aliases))
             if hydrate:
-                self._get()
+                self._get(self.__get__.get('callback', lambda response: response))
 
         def __getattribute__(self, item):
             data = super(Type.Base, self).__getattribute__('fields')
@@ -87,36 +87,37 @@ class Type(type):
             data = super(Type.Base, self).__getattribute__('fields')
             data[key] = value
 
-        def _update(self, **kwargs):
+        def _update(self, callback, **kwargs):
             self.fields.update(self.connection.post(self.__update_endpoint(), kwargs))
             self.fields.update(kwargs)
 
-        def _delete(self):
-            self.connection.delete(self.__delete_endpoint())
+        def _delete(self, callback):
+            return callback(self.connection.delete(self.__delete_endpoint()))
 
         @classmethod
-        def _create(cls, connection, **kwargs):
+        def _create(cls, connection, callback, **kwargs):
             return cls(
-                **connection.put(
+                **callback(connection.put(
                     cls.__create_endpoint(**kwargs),
                     kwargs
-                )
+                ))
             )
 
         @classmethod
-        def _list(cls, connection, **kwargs):
-            collection = connection.get(cls.__list_endpoint(**kwargs))
+        def _list(cls, connection, callback, **kwargs):
             hydrate = cls.__list__.get('hydrate', False)
             return [
                 cls(
                     connection, hydrate=hydrate, **obj
-                ) for obj in collection
+                ) for obj in callback(
+                    connection.get(cls.__list_endpoint(**kwargs))
+                )
             ]
 
-        def _get(self):
+        def _get(self, callback):
             self.fields.update(
                 Response(
-                    self.connection.get(self.__get_endpoint()),
+                    callback(self.connection.get(self.__get_endpoint())),
                     self.__aliases__
                 )
             )
@@ -183,7 +184,8 @@ class Type(type):
                 dct[verb] = Type.__build_func(
                     verb,
                     info.get('args', (())),
-                    info.get('kwargs', {})
+                    info.get('kwargs', {}),
+                    info.get('callback', lambda response: response)
                 )
         for verb in ['create', 'list']:
             if '__%s__' % verb in dct:
@@ -191,18 +193,20 @@ class Type(type):
                 dct[verb] = classmethod(Type.__build_func(
                     verb,
                     ('connection',) + info.get('args', ()),
-                    info.get('kwargs', {})
+                    info.get('kwargs', {}),
+                    info.get('callback', lambda response: response)
                 ))
         return super(Type, mcs).__new__(mcs, name, (mcs.Base,) + bases, dct)
 
     @staticmethod
-    def __build_func(verb, args, kwargs={}, callback = None):
+    def __build_func(verb, args, kwargs, callback):
         params = ['self']
         params += ['%s' % stringcase.snakecase(k) for k in args]
         params += ['%s=%s' % (stringcase.snakecase(k), v) for k, v in kwargs.items()]
-        largs = list(args) + list(kwargs.keys())
-        return eval(
+        largs = ['callback'] + list(args) + list(kwargs.keys())
+        fn = eval(
             'lambda %s: self._%s(%s)' % (
                 ','.join(params), verb, ','.join(['%s=%s' % (k, stringcase.snakecase(k)) for k in largs])
-            )
+            ), {'callback': callback}
         )
+        return fn
