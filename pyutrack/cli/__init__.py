@@ -74,13 +74,14 @@ class PyutrackContext(object):
     def render(self, data):
         oneline = self.format == 'oneline'
         line_sep = '\n' if format else '\n\n'
-        if isinstance(data, collections.Iterable):
-            resp = line_sep.join(
-                k.format(self.format, oneline=oneline) for k in data
-            )
-        else:
-            resp = data.format(self.format, oneline=oneline)
-        click.echo(resp)
+        if data:
+            if isinstance(data, collections.Iterable):
+                resp = line_sep.join(
+                    k.format(self.format, oneline=oneline) for k in data
+                )
+            else:
+                resp = data.format(self.format, oneline=oneline)
+            click.echo(resp)
 
 
 def main():
