@@ -1,7 +1,7 @@
 import click
 from click import get_current_context
 
-from pyutrack import Issue, Project, User, Group
+from pyutrack import *
 from . import cli
 
 @cli.group()
