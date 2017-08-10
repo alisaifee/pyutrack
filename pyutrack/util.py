@@ -72,7 +72,6 @@ class Type(type):
             self.del_config = del_config
 
         def __iadd__(self, other):
-            print(self,self.type,  self.add_config)
             if not self.add_config:
                 raise NotImplementedError
             url = self.add_config.get('url')
