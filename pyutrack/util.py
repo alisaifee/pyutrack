@@ -272,7 +272,7 @@ class Type(type):
         params = ['self']
         params += ['%s' % stringcase.snakecase(k) for k in args]
         params += ['%s=%s' % (stringcase.snakecase(k), "'%s'" % v if isinstance(v, six.string_types) else v) for k, v in kwargs.items()]
-        largs = _locals.keys() + list(args) + list(kwargs.keys())
+        largs = list(_locals.keys()) + list(args) + list(kwargs.keys())
         fn = eval(
             'lambda %s: self._%s(%s)' % (
                 ','.join(params), verb, ','.join(['%s=%s' % (k, stringcase.snakecase(k)) for k in largs])
