@@ -158,7 +158,7 @@ class Connection(object):
         )
 
     @fix_auth
-    def delete(self, path, parse=True):
+    def delete(self, path, parse=False):
         return self.__unwrap(
             self.__session.delete('%s/%s' % (self.__api_url, path), **self.__session_args),
             parse
