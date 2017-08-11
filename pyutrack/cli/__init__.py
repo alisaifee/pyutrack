@@ -14,19 +14,13 @@ from pyutrack.errors import ApiError, LoginError, ResponseError
 @click.option('--username', help='username to access youtrack as')
 @click.option('--password', help='password for current user')
 @click.option('--debug/--no-debug', help='enable/disable verbose logging')
-@click.option(
-    '--format',
-    default=None,
-    help='template to use for rendering youtrack resources'
-)
 @click.pass_context
-def cli(ctx, base_url, username, password, debug, format):
+def cli(ctx, base_url, username, password, debug):
     """
     YouTrack
     """
     connection = ctx.obj.connection
     ctx.obj.debug = debug
-    ctx.obj.format = format
     if debug:
         logging.basicConfig(level=logging.DEBUG)
     if base_url:
