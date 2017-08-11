@@ -155,8 +155,11 @@ class Type(type):
             data[key] = value
 
         def _update(self, callback, **kwargs):
-            self.connection.post(self.__update_endpoint(), kwargs, parse=False)
-            self.fields.update(kwargs)
+            resource_data = self.__update_data(kwargs)
+            self.connection.post(
+                self.__update_endpoint(), resource_data, parse=False
+            )
+            self.fields.update(resource_data)
 
         def _delete(self, callback):
             return callback(
@@ -208,6 +211,15 @@ class Type(type):
         def __update_endpoint(self):
             return self.__update__.get('url') % self.fields
 
+        def __update_data(self, kwargs):
+            data = kwargs.copy()
+            fields = kwargs.keys()
+            data.update(
+                {k: self.fields[k] for k in fields if not kwargs[k] and self.fields.get(k)}
+            )
+            return data
+
+
         def __delete_endpoint(self):
             return self.__delete__.get('url') % self.fields
 
@@ -229,7 +241,7 @@ class Type(type):
                     str(data_source.get(k, getattr(self, k))) for k in fields
                 )
             else:
-                fields = self.__render__
+                fields = self.__render__ if not template else self.fields.keys() + self.__associations__.keys() if template == 'all' else template
                 resp = ''
                 for k in fields:
                     label = stringcase.sentencecase(k).ljust(20)
@@ -242,7 +254,7 @@ class Type(type):
 
         def __str__(self):
             return (
-                getattr(self, '__label__')
+                getattr(self, '__label__', None)
                 or ' '.join('%%(%s)s' % k for k in self.__render__)
             ) % self.fields
 
