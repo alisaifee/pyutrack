@@ -4,14 +4,17 @@ from click import get_current_context
 from pyutrack import *
 from . import cli
 
+
 @cli.group()
 @click.pass_context
 def show(ctx):
     pass
 
+
 @show.resultcallback()
 def result(result):
     get_current_context().obj.render(result)
+
 
 @show.command()
 @click.pass_context

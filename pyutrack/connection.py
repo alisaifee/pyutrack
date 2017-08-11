@@ -51,9 +51,13 @@ class Credentials(object):
         self._password = value
 
     def load_from_keyring(self):
-        keyring_cookie = keyring.get_password(Credentials.KEYRING_COOKIE, self.username)
+        keyring_cookie = keyring.get_password(
+            Credentials.KEYRING_COOKIE, self.username
+        )
         cookies = json.loads(keyring_cookie) if keyring_cookie else None
-        password = keyring.get_password(Credentials.KEYRING_PASSWORD, self.username)
+        password = keyring.get_password(
+            Credentials.KEYRING_PASSWORD, self.username
+        )
         if cookies:
             self.cookies = cookies
         if password:
@@ -62,9 +66,13 @@ class Credentials(object):
 
     def persist(self):
         if self.cookies:
-            keyring.set_password(self.KEYRING_COOKIE, self.username, json.dumps(self.cookies))
+            keyring.set_password(
+                self.KEYRING_COOKIE, self.username, json.dumps(self.cookies)
+            )
         if self.password:
-            keyring.set_password(self.KEYRING_PASSWORD, self.username, self.password)
+            keyring.set_password(
+                self.KEYRING_PASSWORD, self.username, self.password
+            )
 
     def reset_cookies(self):
         if keyring.get_password(self.KEYRING_COOKIE, self.username):
@@ -81,7 +89,7 @@ def fix_auth(meth):
     def inner(self, *args, **kwargs):
         try:
             return meth(self, *args, **kwargs)
-        except (AuthorizationError,) as e:
+        except (AuthorizationError, ) as e:
             if self.credentials.cookies:
                 self.credentials.reset_cookies()
                 if self.credentials.password:
@@ -107,11 +115,16 @@ class Connection(object):
 
     def login(self):
         try:
-            self.post('user/login', {'login': self.credentials.username, 'password': self.credentials.password}, False)
+            self.post(
+                'user/login', {
+                    'login': self.credentials.username,
+                    'password': self.credentials.password
+                }, False
+            )
             self.credentials.cookies = self.__session.cookies.get_dict()
             self.credentials.persist()
             return True
-        except (PermissionsError,) as e:
+        except (PermissionsError, ) as e:
             raise LoginError(e)
 
     @property
@@ -139,29 +152,34 @@ class Connection(object):
     @fix_auth
     def get(self, path, parse=True):
         return self.__unwrap(
-            self.__session.get('%s/%s' % (self.__api_url, path), **self.__session_args),
-            parse
+            self.__session.get(
+                '%s/%s' % (self.__api_url, path), **self.__session_args
+            ), parse
         )
 
     @fix_auth
     def post(self, path, data, parse=True):
         return self.__unwrap(
-            self.__session.post('%s/%s' % (self.__api_url, path), data, **self.__session_args),
-            parse
+            self.__session.post(
+                '%s/%s' % (self.__api_url, path), data, **self.__session_args
+            ), parse
         )
 
     @fix_auth
     def put(self, path, data, parse=True):
+        print(data)
         return self.__unwrap(
-            self.__session.put('%s/%s' % (self.__api_url, path), data, **self.__session_args),
-            parse
+            self.__session.put(
+                '%s/%s' % (self.__api_url, path), data, **self.__session_args
+            ), parse
         )
 
     @fix_auth
     def delete(self, path, parse=False):
         return self.__unwrap(
-            self.__session.delete('%s/%s' % (self.__api_url, path), **self.__session_args),
-            parse
+            self.__session.delete(
+                '%s/%s' % (self.__api_url, path), **self.__session_args
+            ), parse
         )
 
     def __unwrap(self, response, parse):
@@ -173,5 +191,5 @@ class Connection(object):
             return response.content
         try:
             return response.json()
-        except (ValueError,):
+        except (ValueError, ):
             raise ResponseError('Unexpected response format from server')

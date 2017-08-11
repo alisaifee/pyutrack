@@ -10,9 +10,11 @@ from . import cli
 def delete(ctx):
     pass
 
+
 @delete.resultcallback()
 def result(result):
     get_current_context().obj.render(result)
+
 
 @delete.command()
 @click.pass_context

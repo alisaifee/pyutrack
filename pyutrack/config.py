@@ -11,16 +11,13 @@ class Config(object):
     def __init__(self, path=DEFAULT_PATH):
         self.__config = {}
         self.__path = path
-        self.__load(
-            path, allow_not_exist=path == self.DEFAULT_PATH
-        )
+        self.__load(path, allow_not_exist=path == self.DEFAULT_PATH)
 
     def __load(self, path, allow_not_exist):
         if allow_not_exist and not os.path.isfile(path):
             return
         self.__config = anyconfig.load(
-            path,
-            ac_parser=not os.path.splitext(path)[1] and 'ini'
+            path, ac_parser=not os.path.splitext(path)[1] and 'ini'
         ).get('pyutrack', {})
 
     def persist(self):
@@ -32,8 +29,9 @@ class Config(object):
 
     @property
     def credentials(self):
-        return Credentials(self.__config.get('username'),
-                           self.__config.get('password'))
+        return Credentials(
+            self.__config.get('username'), self.__config.get('password')
+        )
 
     @credentials.setter
     def credentials(self, value):

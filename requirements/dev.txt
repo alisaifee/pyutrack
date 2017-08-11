@@ -1,0 +1,4 @@
+-r test.txt
+-r docs.txt
+flake8
+pylint

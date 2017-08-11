@@ -4,14 +4,17 @@ from click import get_current_context
 from pyutrack import Issue, Project, User, Group, Role
 from . import cli
 
+
 @cli.group()
 @click.pass_context
 def update(ctx):
     pass
 
+
 @update.resultcallback()
 def result(result):
     get_current_context().obj.render(result)
+
 
 @update.command()
 @click.pass_context
@@ -26,6 +29,7 @@ def issue(ctx, id, summary, description, command):
     else:
         issue.update(summary=summary, description=description)
     return issue
+
 
 @update.command()
 @click.pass_context
@@ -54,6 +58,7 @@ def group(ctx, name, add_roles, remove_roles):
     group = Group(ctx.obj.connection, hydrate=True, name=name)
     group.roles += add_roles
     group.roles -= remove_roles
+
 
 @update.command()
 @click.pass_context

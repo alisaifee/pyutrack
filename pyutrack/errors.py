@@ -6,7 +6,10 @@ class ErrorRegistry(type):
 
     def __new__(mcs, name, bases, dct):
         cls = super(ErrorRegistry, mcs).__new__(mcs, name, bases, dct)
-        [ErrorRegistry.REGISTRY.setdefault(code, cls) for code in dct.get('CODES', [])]
+        [
+            ErrorRegistry.REGISTRY.setdefault(code, cls)
+            for code in dct.get('CODES', [])
+        ]
         return cls
 
 
@@ -40,8 +43,10 @@ class NotFoundError(ApiError):
 class LoginError(Exception):
     pass
 
+
 class ResponseError(Exception):
     pass
+
 
 def response_to_exc(response):
     return ErrorRegistry.REGISTRY.get(response.status_code, ApiError)(response)

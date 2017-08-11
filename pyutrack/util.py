@@ -13,6 +13,7 @@ def print_friendly(value, sep=', '):
         return sep.join(str(k) for k in value)
     return str(value)
 
+
 class Field(object):
     def __init__(self, data):
         """
@@ -21,7 +22,10 @@ class Field(object):
         """
         self.name = data['name']
         self.value = data['value']
-        self.extras = {k: v for k, v in data.items() if k not in ['name', 'value']}
+        self.extras = {
+            k: v
+            for k, v in data.items() if k not in ['name', 'value']
+        }
 
     def __repr__(self):
         return self.value.__repr__()
@@ -49,17 +53,22 @@ class Response(dict):
         """
         if not other: return
         super(Response, self).update(
-            {self.__aliases.get(k, k): v for k, v in other.items() if k != 'field'}
+            {
+                self.__aliases.get(k, k): v
+                for k, v in other.items() if k != 'field'
+            }
         )
         for field in other.get('field', []):
             f = Field(field)
             super(Response, self).update({f.name: f})
 
     def __getitem__(self, item):
-        return super(Response, self).__getitem__(self.__aliases.get(item, item))
+        return super(Response,
+                     self).__getitem__(self.__aliases.get(item, item))
 
     def __setitem__(self, item, value):
-        return super(Response, self).__setitem__(self.__aliases.get(item, item), value)
+        return super(Response,
+                     self).__setitem__(self.__aliases.get(item, item), value)
 
 
 class Type(type):
@@ -76,7 +85,9 @@ class Type(type):
                 raise NotImplementedError
             url = self.add_config.get('url')
             fields = self.parent.fields.copy()
-            method = getattr(self.parent.connection, self.add_config.get('method'))
+            method = getattr(
+                self.parent.connection, self.add_config.get('method')
+            )
             for item in other:
                 fields.update({self.add_config.get('key'): item})
                 method(url % fields, {}, parse=False)
@@ -96,17 +107,22 @@ class Type(type):
             assoc = self()
             hydrate = self.get_config.get('hydrate', False)
             if not isinstance(assoc, collections.Iterable):
-                raise TypeError('%s->%s is not iterable' % (self.parent.__class__.__name__, self.type.__name__))
+                raise TypeError(
+                    '%s->%s is not iterable' %
+                    (self.parent.__class__.__name__, self.type.__name__)
+                )
             else:
-                return (self.type(self.parent.connection, hydrate=hydrate, **v) for v in assoc)
+                return (
+                    self.type(self.parent.connection, hydrate=hydrate, **v)
+                    for v in assoc
+                )
 
         def __call__(self):
             fields = self.parent.fields.copy()
             fields.update(self.get_config.get('kwargs', {}))
             url = self.get_config.get('url') % fields
-            return  self.get_config.get('callback', lambda r: r)(
-                self.parent.connection.get(url)
-            )
+            return self.get_config.get('callback', lambda r: r
+                                       )(self.parent.connection.get(url))
 
     class Base(object):
         __aliases__ = {}
@@ -120,15 +136,18 @@ class Type(type):
             """
             aliases = super(Type.Base, self).__getattribute__('__aliases__')
             super(Type.Base, self).__setattr__('connection', connection)
-            super(Type.Base, self).__setattr__('fields', Response(fields, aliases))
+            super(Type.Base,
+                  self).__setattr__('fields', Response(fields, aliases))
             if hydrate:
-                self._get(self.__get__.get('callback', lambda response: response))
+                self._get(
+                    self.__get__.get('callback', lambda response: response)
+                )
 
         def __getattribute__(self, item):
             data = super(Type.Base, self).__getattribute__('fields')
             try:
                 return data[item]
-            except (KeyError,):
+            except (KeyError, ):
                 return super(Type.Base, self).__getattribute__(item)
 
         def __setattr__(self, key, value):
@@ -148,22 +167,20 @@ class Type(type):
         def _create(cls, connection, callback, **kwargs):
             return cls(
                 connection,
-                **callback(connection.put(
-                    cls.__create_endpoint(**kwargs),
-                    kwargs
-                ))
+                **callback(
+                    connection.put(cls.__create_endpoint(**kwargs), kwargs)
+                )
             )
 
         @classmethod
         def _list(cls, connection, callback, **kwargs):
             hydrate = cls.__list__.get('hydrate', False)
-            return [
-                cls(
-                    connection, hydrate=hydrate, **obj
-                ) for obj in callback(
-                    connection.get(cls.__list_endpoint(**kwargs))
-                )
+            data = [
+                cls(connection, hydrate=hydrate, **obj)
+                for obj in
+                callback(connection.get(cls.__list_endpoint(**kwargs)))
             ]
+            return data
 
         def _get(self, callback):
             self.fields.update(
@@ -178,8 +195,7 @@ class Type(type):
                 params['get']['kwargs'].update(kwargs)
             return Type.Association(
                 params['type'], self, params['get'],
-                params.get('add', {}),
-                params.get('remove', {})
+                params.get('add', {}), params.get('remove', {})
             )
 
         def __get_endpoint(self):
@@ -226,8 +242,8 @@ class Type(type):
 
         def __str__(self):
             return (
-                getattr(self, '__label__') or
-                ' '.join('%%(%s)s' % k for k in self.__render__)
+                getattr(self, '__label__')
+                or ' '.join('%%(%s)s' % k for k in self.__render__)
             ) % self.fields
 
     def __new__(mcs, name, bases, dct):
@@ -237,8 +253,10 @@ class Type(type):
                 fn = Type.__build_func(
                     verb,
                     info.get('args', (())),
-                    info.get('kwargs', {}),
-                    {'callback': info.get('callback', lambda response: response)}
+                    info.get('kwargs', {}), {
+                        'callback':
+                        info.get('callback', lambda response: response)
+                    }
                 )
                 fn.__doc__ = '%s %s' % (verb, name.lower())
                 dct[verb] = fn
@@ -246,17 +264,18 @@ class Type(type):
             if '__%s__' % verb in dct:
                 info = dct['__%s__' % verb]
                 fn = Type.__build_func(
-                    verb,
-                    ('connection',) + info.get('args', ()),
-                    info.get('kwargs', {}),
-                    {'callback': info.get('callback', lambda response: response)}
+                    verb, ('connection', ) + info.get('args', ()),
+                    info.get('kwargs', {}), {
+                        'callback':
+                        info.get('callback', lambda response: response)
+                    }
                 )
                 fn.__doc__ = '%s %s' % (verb, name.lower())
                 dct[verb] = classmethod(fn)
         for association, params in dct.get('__associations__', {}).items():
             fn = Type.__build_func(
-                'get_association', (), params.get('get', {}).get('kwargs', {}),
-                {'params': params}
+                'get_association', (),
+                params.get('get', {}).get('kwargs', {}), {'params': params}
             )
             fn.__doc__ = 'get %s %s' % (name.lower(), association)
             prop = fn
@@ -264,17 +283,24 @@ class Type(type):
             dct[association] = property(prop)
             dct["get_%s" % association] = fn
 
-        return super(Type, mcs).__new__(mcs, name, (mcs.Base,) + bases, dct)
+        return super(Type, mcs).__new__(mcs, name, (mcs.Base, ) + bases, dct)
 
     @staticmethod
     def __build_func(verb, args, kwargs, _locals):
         params = ['self']
         params += ['%s' % stringcase.snakecase(k) for k in args]
-        params += ['%s=%s' % (stringcase.snakecase(k), "'%s'" % v if isinstance(v, six.string_types) else v) for k, v in kwargs.items()]
+        params += [
+            '%s=%s' % (
+                stringcase.snakecase(k), "'%s'" % v
+                if isinstance(v, six.string_types) else v
+            ) for k, v in kwargs.items()
+        ]
         largs = list(_locals.keys()) + list(args) + list(kwargs.keys())
         fn = eval(
             'lambda %s: self._%s(%s)' % (
-                ','.join(params), verb, ','.join(['%s=%s' % (k, stringcase.snakecase(k)) for k in largs])
+                ','.join(params), verb, ','.join(
+                    ['%s=%s' % (k, stringcase.snakecase(k)) for k in largs]
+                )
             ), _locals
         )
         return fn

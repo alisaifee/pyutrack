@@ -10,9 +10,11 @@ from . import cli
 def new(ctx):
     pass
 
+
 @new.resultcallback()
 def result(result):
     get_current_context().obj.render(result)
+
 
 @new.command()
 @click.pass_context
@@ -21,7 +23,10 @@ def result(result):
 @click.argument('description')
 def issue(ctx, project, summary, description):
     return Issue.create(
-        ctx.obj.connection, project=project, summary=summary, description=description
+        ctx.obj.connection,
+        project=project,
+        summary=summary,
+        description=description
     )
 
 
@@ -31,9 +36,7 @@ def issue(ctx, project, summary, description):
 @click.argument('name')
 @click.argument('lead')
 def project(ctx, id, name, lead):
-    return Project.create(
-        ctx.obj.connection, id, name, lead
-    )
+    return Project.create(ctx.obj.connection, id, name, lead)
 
 
 @new.command()
@@ -43,9 +46,7 @@ def project(ctx, id, name, lead):
 @click.argument('email')
 @click.argument('password')
 def user(ctx, login, name, email, password):
-    return User.create(
-        ctx.obj.connection, login, name, email, password
-    )
+    return User.create(ctx.obj.connection, login, name, email, password)
 
 
 @new.command()
@@ -58,11 +59,10 @@ def group(ctx, name, description, auto_join):
         ctx.obj.connection, name, description=description, auto_join=auto_join
     )
 
+
 @new.command()
 @click.pass_context
 @click.argument('name')
 @click.option('--description')
 def role(ctx, name, description):
-    return Role.create(
-        ctx.obj.connection, name, description=description
-    )
+    return Role.create(ctx.obj.connection, name, description=description)
