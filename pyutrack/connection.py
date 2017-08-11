@@ -167,7 +167,6 @@ class Connection(object):
 
     @fix_auth
     def put(self, path, data, parse=True):
-        print(data)
         return self.__unwrap(
             self.__session.put(
                 '%s/%s' % (self.__api_url, path), data, **self.__session_args
