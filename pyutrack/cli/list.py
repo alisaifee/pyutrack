@@ -6,7 +6,7 @@ from . import cli
 
 @cli.group()
 @click.pass_context
-def list(ctx):
+def list(_):
     """
     List various youtrack resources
     """

@@ -7,7 +7,7 @@ from . import cli
 
 @cli.group()
 @click.pass_context
-def new(ctx):
+def new(_):
     """
     create new youtrack resources
     """

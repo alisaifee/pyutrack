@@ -7,7 +7,7 @@ from . import cli
 
 @cli.group()
 @click.pass_context
-def update(ctx):
+def update(_):
     """
     update existing youtrack resources
     """
