@@ -10,15 +10,19 @@ from pyutrack.errors import ApiError, LoginError, ResponseError
 
 
 @click.group()
-@click.option('--base_url')
-@click.option('--username')
-@click.option('--password')
-@click.option('--debug/--no-debug')
-@click.option('--format', default=None)
+@click.option('--base_url', help='root url of your youtrack installation')
+@click.option('--username', help='username to access youtrack as')
+@click.option('--password', help='password for current user')
+@click.option('--debug/--no-debug', help='enable/disable verbose logging')
+@click.option(
+    '--format',
+    default=None,
+    help='template to use for rendering youtrack resources'
+)
 @click.pass_context
 def cli(ctx, base_url, username, password, debug, format):
     """
-    YouTrack CLI
+    YouTrack
     """
     connection = ctx.obj.connection
     ctx.obj.debug = debug
