@@ -14,6 +14,7 @@ from pyutrack import Credentials
 
 
 class PyutrackTest(unittest.TestCase):
+    unit = True
     def setUp(self):
         credentials = Credentials(username='root')
         credentials.reset_cookies()

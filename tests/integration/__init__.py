@@ -8,7 +8,8 @@ SERVER = YouTrackServer()
 
 
 class IntegrationTest(PyutrackTest):
-    integration = True
+    unit = False
+
     @classmethod
     def setUpClass(cls):
         if not SERVER.running:
