@@ -1,4 +1,4 @@
 -r test.txt
 -r docs.txt
 flake8
-pylint
+pylint==1.7.2
