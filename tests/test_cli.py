@@ -19,7 +19,7 @@ class TestYoutrack_cli(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(cli.cli)
         assert result.exit_code == 0
-        assert 'YouTrack CLI' in result.output
+        assert 'YouTrack' in result.output
         help_result = runner.invoke(cli.cli, ['--help'])
         assert help_result.exit_code == 0
         assert 'Show this message and exit.' in help_result.output
