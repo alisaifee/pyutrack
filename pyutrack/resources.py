@@ -99,9 +99,9 @@ class User(object):
     }
     __delete__ = {'url': 'user/%(login)s'}
     __update__ = {
-        'url': 'admin/user/%(login)s',
-        'args': ('login', ),
+        'url': 'admin/user',
         'kwargs': {
+            'login': '',
             'fullName': '',
             'email': '',
             'password': ''
@@ -120,7 +120,7 @@ class User(object):
             'group': ''
         }
     }
-    __render__ = ('login', 'email')
+    __render__ = ('login', 'email', 'fullName')
     __label__ = '%(name)s'
     __aliases__ = {'name': 'fullName'}
     __associations__ = {
