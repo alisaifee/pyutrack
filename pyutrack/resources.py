@@ -28,6 +28,7 @@ class Role(object):
         'args': ('description', 'newName')
     }
     __list__ = {'url': 'admin/role', 'hydrate': True}
+    __label__ = '%(name)s'
     __render__ = ('name', 'description')
     __associations__ = {
         'permissions': {
@@ -69,7 +70,7 @@ class Group(object):
     }
     __list__ = {'url': 'admin/group', 'hydrate': True}
     __render__ = ('name', 'description', 'autoJoin')
-
+    __label__ = '%(name)s'
     __associations__ = {
         'roles': {
             'type': Role,
@@ -212,6 +213,7 @@ class Issue(object):
         'callback': lambda response: response['issue']
     }
     __aliases__ = {'project': 'projectShortName'}
+    __label__ = '%(id)s'
     __render__ = (
         'id', 'summary', 'reporterName', 'updaterName', 'Priority',
         'issue_links'
@@ -275,5 +277,6 @@ class Project(object):
         'shortName': 'projectId',
         'lead': 'projectLeadLogin'
     }
+    __label__ = '%(id)s'
     __render__ = ('id', 'name', 'lead')
     __render_min__ = ('id', 'name')

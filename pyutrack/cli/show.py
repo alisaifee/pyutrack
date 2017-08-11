@@ -13,7 +13,7 @@ def show(ctx):
 
 @show.resultcallback()
 def result(result):
-    get_current_context().obj.render(result)
+    get_current_context().obj.render(result, format='all')
 
 
 @show.command()
@@ -42,3 +42,9 @@ def user(ctx, login):
 @click.argument('name')
 def group(ctx, name):
     return Group(ctx.obj.connection, hydrate=True, name=name)
+
+@show.command()
+@click.pass_context
+@click.argument('name')
+def role(ctx, name):
+    return Role(ctx.obj.connection, hydrate=True, name=name)
