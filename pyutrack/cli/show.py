@@ -8,6 +8,9 @@ from . import cli
 @cli.group()
 @click.pass_context
 def show(ctx):
+    """
+    show details for youtrack resources
+    """
     pass
 
 

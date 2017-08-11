@@ -8,6 +8,9 @@ from . import cli
 @cli.group()
 @click.pass_context
 def delete(ctx):
+    """
+    delete youtrack resources
+    """
     pass
 
 
