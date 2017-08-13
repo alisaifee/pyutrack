@@ -6,7 +6,7 @@ from requests import RequestException
 
 from pyutrack import Credentials, Connection
 from pyutrack.config import Config
-from pyutrack.errors import ApiError, LoginError, ResponseError
+from pyutrack.errors import ApiError, LoginError, ResponseError, CliError
 
 
 @click.group()
@@ -89,7 +89,7 @@ def main():
             obj=PyutrackContext(connection, config),
             auto_envvar_prefix='YOUTRACK'
         )
-    except (ApiError, LoginError, ResponseError) as e:
+    except (ApiError, LoginError, ResponseError, CliError) as e:
         click.secho(str(e), fg='red')
-    except (RequestException, ) as e:
+    except (RequestException, CliError) as e:
         click.secho(str(e), fg='red')

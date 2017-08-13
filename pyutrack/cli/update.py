@@ -2,6 +2,7 @@ import click
 from click import get_current_context
 
 from pyutrack import Issue, User, Group, Role
+from pyutrack.errors import InputError, CliError
 from . import cli
 
 

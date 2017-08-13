@@ -21,9 +21,9 @@ def result(result):
 
 @new.command()
 @click.pass_context
-@click.option('--project')
+@click.argument('project')
 @click.argument('summary')
-@click.argument('description')
+@click.option('--description')
 def issue(ctx, project, summary, description):
     return Issue.create(
         ctx.obj.connection,
@@ -37,9 +37,9 @@ def issue(ctx, project, summary, description):
 @click.pass_context
 @click.argument('id')
 @click.argument('name')
-@click.argument('lead')
+@click.option('--lead', default=lambda: get_current_context().obj.connection.credentials.username)
 def project(ctx, id, name, lead):
-    return Project.create(ctx.obj.connection, id, name, lead)
+    return Project.create(ctx.obj.connection, name, lead, project_id=id)
 
 
 @new.command()

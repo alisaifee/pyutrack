@@ -8,6 +8,7 @@ from pyutrack.util import Type
 class Permission(object):
     __list__ = {'url': 'admin/permission', 'hydrate': False}
     __render__ = ('name', 'description')
+    __label__ = '%(name)s'
 
 
 @six.add_metaclass(Type)
@@ -111,8 +112,7 @@ class User(object):
     __list__ = {
         'url':
         'admin/user?q=%(query)s&role=%(role)s&permission=%(permission)s&group=%(group)s',
-        'hydrate':
-        True,
+        'hydrate': True,
         'kwargs': {
             'project': '',
             'role': '',
@@ -129,7 +129,7 @@ class User(object):
             'type': Group,
             'get': {
                 'url': 'admin/user/%(login)s/group',
-                'hydrate': True
+                'hydrate': False
             },
             'add': {
                 'url': 'admin/user/%(login)s/group/%(group)s',
@@ -215,8 +215,7 @@ class Issue(object):
     __aliases__ = {'project': 'projectShortName'}
     __label__ = '%(id)s'
     __render__ = (
-        'id', 'summary', 'reporterName', 'updaterName', 'Priority',
-        'issue_links'
+        'id', 'summary', 'assignee', 'reporterName', 'updaterName', 'Priority'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
@@ -250,8 +249,9 @@ class Project(object):
     }
     __create__ = {
         'url': 'admin/project/%(projectId)s',
-        'args': ('projectId', 'projectName', 'projectLeadLogin'),
+        'args': ('projectName', 'projectLeadLogin'),
         'kwargs': {
+            'projectId': None,
             'startingNumber': 1,
             'description': ''
         }
