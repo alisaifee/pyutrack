@@ -13,7 +13,9 @@ matrix:
   - python: "2.7"
     env:
      - YOUTRACK_TEST_SERVER_VERSION=latest
-     - YOUTRACK_TEST_SERVER_TIMEOUT=240
+  - python: "2.7"
+    env:
+     - YOUTRACK_TEST_SERVER_VERSION=7.0.29566
 script: nose2 --with-cov $TEST_ARGS
 after_success:
     - codecov
