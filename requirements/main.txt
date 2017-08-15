@@ -1,7 +1,7 @@
 anyconfig
 click
 keyring
-requests
+requests==2.18.4
 retry
 six
 stringcase
