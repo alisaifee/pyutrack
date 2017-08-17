@@ -30,22 +30,32 @@ Quick start
 All interaction with YouTrack resources is performed around five main sub-commands:
 `new`, `update`, `list`, `show` & `delete`.
 
+Here's a few examples to get started. For more details on each sub-command refer to `command documentation`_.
+
 Listing...
 ~~~~~~~~~~
 
-Users::
+Users
+^^^^^
+::
 
    pyu list users
 
-Projects::
+Projects
+^^^^^^^^
+::
 
    pyu list projects
 
-All Issues (useless)::
+All Issues in a project
+^^^^^^^^^^^^^^^^^^^^^^^
+::
 
-   pyu list issues
+   pyu list issues --project=MYPROJECT
 
-Issues filtered with a query [`Search Query Reference`_]::
+Issues filtered with a query (`Search Query Reference`_)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
 
    pyu list issues --filter='crash' # issues containing the word "crash"
    pyu list issues --filter='for: me' # issues for current user
@@ -55,13 +65,49 @@ Issues filtered with a query [`Search Query Reference`_]::
 Creating...
 ~~~~~~~~~~~
 
-New regular user::
+New regular user
+^^^^^^^^^^^^^^^^
+::
 
    pyu new user new_user01 'New User' newuser@moo.com password
 
-New user with specific group(s)::
+New user with specific group(s)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
 
    pyu new user new_admin01 'New Admin' newadmin@moo.com password --group=Admin
+
+
+New issue
+^^^^^^^^^
+::
+
+   pyu new issue MYPROJECT 'this is an important issue'
+
+New issue tagged with kitties and marked as critical and assigned to me (`Command Reference`_)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+   pyu new issue MYPROJECT 'this is an important issue' --command='tag kitties priority critical assignee me'
+
+
+Updating...
+~~~~~~~~~~~
+
+Change a user's password
+^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+   pyu update user some-user --password=new-password
+
+Update an issue using a command (`Command Reference`_)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+   pyu update issue PRO-1 --command='assignee: me' # assign issue to yourself
+   pyu update issue PRO-1 --command='tag: kitties' # tag the issue with kitties
+   pyu update issue PRO-1 --command='priority: critical' # increase priority to critical
+   pyu update issue PRO-1 --command='fixed' # mark issue as fixed
 
 Command documentation
 ---------------------
