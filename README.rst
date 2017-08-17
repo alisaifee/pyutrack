@@ -20,16 +20,10 @@ Python YouTrack
 .. image:: https://codecov.io/gh/alisaifee/pyutrack/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/alisaifee/pyutrack
 
-Python bindings and command line utility to interface with YouTrack
+Command line utility to interface with YouTrack
 
 
 * Free software: MIT license
 * Documentation: https://pyutrack.readthedocs.io.
 
-
-Features
---------
-
-* Object oriented interface to the YouTrack REST API
-* Command line utility for routine interactions with YouTrack
 
