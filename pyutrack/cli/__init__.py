@@ -28,29 +28,18 @@ def cli(ctx, base_url, username, password, debug):
 
     if username and username != connection.credentials.username:
         connection.credentials = Credentials(username, password)
-    if not connection.api_url:
-        connection.api_url = click.prompt("Enter base url for youtrack")
-    if not connection.credentials.username:
-        connection.credentials.username = click.prompt("Enter username")
+    if not connection.api_url or not connection.credentials.username:
+        ctx.invoke(new.config)
+        ctx.obj.config.reload()
+        connection.api_url =  ctx.obj.config.base_url
+        connection.credentials = ctx.obj.config.credentials
     if not (connection.credentials.cookies or connection.credentials.password):
         connection.credentials.password = click.prompt(
             "Enter password for %s" % connection.credentials.username,
             hide_input=True
         )
-
-    if not ctx.obj.config.persisted:
-        if click.prompt(
-            "You do not have a config file in %s. Would you like to "
-            "persist these settings?" % Config.DEFAULT_PATH,
-            type=click.BOOL
-        ):
-            ctx.obj.config.credentials = connection.credentials
-            ctx.obj.config.base_url = connection.api_url
-            ctx.obj.config.persist()
-
     if not connection.credentials.cookies:
         connection.login()
-
     if base_url:
         connection.api_url = base_url
 

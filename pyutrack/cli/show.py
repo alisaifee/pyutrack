@@ -16,7 +16,7 @@ def show(_):
 
 @show.resultcallback()
 def result(result):
-    get_current_context().obj.render(result, format='all')
+    get_current_context().obj.render(result)
 
 
 @show.command()
@@ -50,4 +50,13 @@ def group(ctx, name):
 @click.pass_context
 @click.argument('name')
 def role(ctx, name):
-    return Role(ctx.obj.connection, hydrate=True, name=name)
+    return Role(ctx.obj.connection, name=name)
+
+@show.command()
+@click.pass_context
+def config(ctx):
+    click.echo("""Base url: %(base_url)s
+username: %(username)s""" % {
+        'base_url': ctx.obj.connection.api_url,
+        'username': ctx.obj.connection.credentials.username
+    })
