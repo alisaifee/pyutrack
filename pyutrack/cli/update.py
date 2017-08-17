@@ -6,6 +6,7 @@ from pyutrack.cli.util import admin_command
 from pyutrack.errors import InputError, CliError
 from . import cli
 
+
 @cli.group()
 @click.pass_context
 def update(_):
@@ -84,8 +85,15 @@ def group(ctx, name, add_roles, remove_roles):
 @update.command()
 @click.pass_context
 @click.argument('name')
-@click.option('add_permissions', '+permission', multiple=True, help='add permission')
-@click.option('remove_permissions', '-permission', multiple=True, help='remove permission')
+@click.option(
+    'add_permissions', '+permission', multiple=True, help='add permission'
+)
+@click.option(
+    'remove_permissions',
+    '-permission',
+    multiple=True,
+    help='remove permission'
+)
 @admin_command
 def role(ctx, name, add_permissions, remove_permissions):
     """update a role"""

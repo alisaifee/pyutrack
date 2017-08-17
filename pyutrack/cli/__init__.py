@@ -59,5 +59,6 @@ def main():
     except (RequestException, CliError) as e:
         click.secho(str(e), fg='red')
 
+
 # import subcommands
 from pyutrack.cli import new, show, update, delete, list

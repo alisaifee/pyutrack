@@ -113,7 +113,7 @@ class Connection(object):
         if base_url:
             self.api_url = base_url
 
-    def login(self, persist_credentials = True):
+    def login(self, persist_credentials=True):
         try:
             self.post(
                 'user/login', {

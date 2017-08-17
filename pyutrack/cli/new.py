@@ -66,11 +66,10 @@ def project(ctx, id, name, lead):
 @admin_command
 def user(ctx, login, name, email, password, group):
     """create a new user"""
-    user = User.create(
-        ctx.obj.connection, login, name, email, password
-    )
+    user = User.create(ctx.obj.connection, login, name, email, password)
     user.groups += group
     return user
+
 
 @new.command()
 @click.pass_context
@@ -93,13 +92,16 @@ def group(ctx, name, description, auto_join, role):
 @click.pass_context
 @click.argument('name')
 @click.option('--description')
-@click.option('--permission', multiple=True, help='permission(s) to give new role')
+@click.option(
+    '--permission', multiple=True, help='permission(s) to give new role'
+)
 @admin_command
 def role(ctx, name, description, permission):
     """create a new role"""
     role = Role.create(ctx.obj.connection, name, description=description)
     if permission:
         role.permissions += permission
+
 
 @new.command()
 @click.pass_context

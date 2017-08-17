@@ -51,5 +51,6 @@ class ResponseError(Exception):
 class CliError(Exception):
     pass
 
+
 def response_to_exc(response):
     return ErrorRegistry.REGISTRY.get(response.status_code, ApiError)(response)

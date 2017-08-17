@@ -99,8 +99,9 @@ class Type(type):
                     )
                 else:
                     self._cache = (
-                        self.type(self.parent.connection, hydrate=hydrate, **v)
-                        for v in assoc
+                        self.type(
+                            self.parent.connection, hydrate=hydrate, **v
+                        ) for v in assoc
                     )
             return self._cache
 
