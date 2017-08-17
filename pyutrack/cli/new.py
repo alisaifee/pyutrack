@@ -27,6 +27,7 @@ def result(result):
 @click.argument('summary')
 @click.option('--description')
 def issue(ctx, project, summary, description):
+    """create a new issue"""
     return Issue.create(
         ctx.obj.connection,
         project=project,
@@ -44,6 +45,7 @@ def issue(ctx, project, summary, description):
     default=lambda: get_current_context().obj.connection.credentials.username
 )
 def project(ctx, id, name, lead):
+    """create a new project"""
     return Project.create(ctx.obj.connection, name, lead, project_id=id)
 
 
@@ -54,6 +56,7 @@ def project(ctx, id, name, lead):
 @click.argument('email')
 @click.argument('password')
 def user(ctx, login, name, email, password):
+    """create a new user"""
     return User.create(ctx.obj.connection, login, name, email, password)
 
 
@@ -61,8 +64,9 @@ def user(ctx, login, name, email, password):
 @click.pass_context
 @click.argument('name')
 @click.option('--description')
-@click.option('--auto-join/--no-auto-join')
+@click.option('--auto-join/--no-auto-join', help='automatically add new users')
 def group(ctx, name, description, auto_join):
+    """create a new group"""
     return Group.create(
         ctx.obj.connection, name, description=description, auto_join=auto_join
     )
@@ -73,6 +77,7 @@ def group(ctx, name, description, auto_join):
 @click.argument('name')
 @click.option('--description')
 def role(ctx, name, description):
+    """create a new role"""
     return Role.create(ctx.obj.connection, name, description=description)
 
 
