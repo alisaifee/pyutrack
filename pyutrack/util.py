@@ -1,5 +1,7 @@
 import collections
+import functools
 
+import dpath
 import six
 import pprint
 
@@ -14,28 +16,8 @@ def print_friendly(value, sep=', '):
     return str(value)
 
 
-class Field(object):
-    def __init__(self, data):
-        """
-
-        :param data:
-        """
-        self.name = data['name']
-        self.value = data['value']
-        self.extras = {
-            k: v
-            for k, v in data.items() if k not in ['name', 'value']
-        }
-
-    def __repr__(self):
-        return self.value.__repr__()
-
-    def __str__(self):
-        return print_friendly(self.value)
-
-
 class Response(dict):
-    def __init__(self, data, aliases={}):
+    def __init__(self, data={}, aliases={}):
         """
 
         :param data:
@@ -58,9 +40,8 @@ class Response(dict):
                 for k, v in other.items() if k != 'field'
             }
         )
-        for field in other.get('field', []):
-            f = Field(field)
-            super(Response, self).update({f.name: f})
+        for f in other.get('field', []):
+            super(Response, self).update({f['name']: f['value']})
 
     def __getitem__(self, item):
         return super(Response,
@@ -72,13 +53,14 @@ class Response(dict):
 
 
 class Type(type):
-    class Association(object):
+    class Association(collections.Iterable):
         def __init__(self, type, parent, get_config, add_config, del_config):
             self.type = type
             self.parent = parent
             self.get_config = get_config
             self.add_config = add_config
             self.del_config = del_config
+            self._cache = None
 
         def __iadd__(self, other):
             if not self.add_config:
@@ -93,6 +75,9 @@ class Type(type):
                 method(url % fields, {}, parse=False)
             return self
 
+        def __len__(self):
+            return len(list(self.__iter__()))
+
         def __isub__(self, other):
             if not self.del_config:
                 raise NotImplementedError
@@ -104,18 +89,21 @@ class Type(type):
             return self
 
         def __iter__(self):
-            assoc = self()
-            hydrate = self.get_config.get('hydrate', False)
-            if not isinstance(assoc, collections.Iterable):
-                raise TypeError(
-                    '%s->%s is not iterable' %
-                    (self.parent.__class__.__name__, self.type.__name__)
-                )
-            else:
-                return (
-                    self.type(self.parent.connection, hydrate=hydrate, **v)
-                    for v in assoc
-                )
+            if self._cache is None:
+                assoc = self()
+                hydrate = self.get_config.get('hydrate', False)
+                if not isinstance(assoc, collections.Iterable):
+                    raise TypeError(
+                        '%s->%s is not iterable' %
+                        (self.parent.__class__.__name__, self.type.__name__)
+                    )
+                else:
+                    self._cache = (
+                        self.type(
+                            self.parent.connection, hydrate=hydrate, **v
+                        ) for v in assoc
+                    )
+            return self._cache
 
         def __call__(self):
             fields = self.parent.fields.copy()
@@ -123,6 +111,13 @@ class Type(type):
             url = self.get_config.get('url') % fields
             return self.get_config.get('callback', lambda r: r
                                        )(self.parent.connection.get(url))
+
+    class AssociationProperty(object):
+        def __init__(self, binding):
+            self.binding = binding
+
+        def __get__(self, instance, obj_type):
+            return self.binding(instance)
 
     class Base(object):
         __aliases__ = {}
@@ -143,20 +138,18 @@ class Type(type):
                     self.__get__.get('callback', lambda response: response)
                 )
 
-        def __getattribute__(self, item):
-            data = super(Type.Base, self).__getattribute__('fields')
+        def _get_attribute(self, lookup):
             try:
-                return data[item]
-            except (KeyError, ):
-                return super(Type.Base, self).__getattribute__(item)
-
-        def __setattr__(self, key, value):
-            data = super(Type.Base, self).__getattribute__('fields')
-            data[key] = value
+                return dpath.util.get(self.fields, lookup)
+            except KeyError:
+                return None
 
         def _update(self, callback, **kwargs):
-            self.connection.post(self.__update_endpoint(), kwargs, parse=False)
-            self.fields.update(kwargs)
+            resource_data = self.__update_data(kwargs)
+            self.connection.post(
+                self.__update_endpoint(), resource_data, parse=False
+            )
+            self.fields.update(resource_data)
 
         def _delete(self, callback):
             return callback(
@@ -208,6 +201,17 @@ class Type(type):
         def __update_endpoint(self):
             return self.__update__.get('url') % self.fields
 
+        def __update_data(self, kwargs):
+            data = kwargs.copy()
+            fields = kwargs.keys()
+            data.update(
+                {
+                    k: self.fields[k]
+                    for k in fields if not kwargs[k] and self.fields.get(k)
+                }
+            )
+            return data
+
         def __delete_endpoint(self):
             return self.__delete__.get('url') % self.fields
 
@@ -229,11 +233,11 @@ class Type(type):
                     str(data_source.get(k, getattr(self, k))) for k in fields
                 )
             else:
-                fields = self.__render__
+                fields = template or self.__render__
                 resp = ''
                 for k in fields:
                     label = stringcase.sentencecase(k).ljust(20)
-                    value = data_source.get(k, getattr(self, k))
+                    value = data_source.get(k, getattr(self, k, None))
                     resp += "%s : %s\n" % (label, print_friendly(value))
                 return resp
 
@@ -242,7 +246,7 @@ class Type(type):
 
         def __str__(self):
             return (
-                getattr(self, '__label__')
+                getattr(self, '__label__', None)
                 or ' '.join('%%(%s)s' % k for k in self.__render__)
             ) % self.fields
 
@@ -272,16 +276,21 @@ class Type(type):
                 )
                 fn.__doc__ = '%s %s' % (verb, name.lower())
                 dct[verb] = classmethod(fn)
+
         for association, params in dct.get('__associations__', {}).items():
             fn = Type.__build_func(
                 'get_association', (),
                 params.get('get', {}).get('kwargs', {}), {'params': params}
             )
             fn.__doc__ = 'get %s %s' % (name.lower(), association)
-            prop = fn
-            prop.__doc__ = '%s %s' % (name.lower(), association)
-            dct[association] = property(prop)
+            dct[association] = Type.AssociationProperty(fn)
+            dct[association].__doc__ = '%s %s' % (name.lower(), association)
             dct["get_%s" % association] = fn
+
+        for attribute, lookup in dct.get('__attributes__', {}).items():
+            getter = functools.partial(Type.Base._get_attribute, lookup=lookup)
+            getter.__doc__ = attribute
+            dct[attribute] = property(getter)
 
         return super(Type, mcs).__new__(mcs, name, (mcs.Base, ) + bases, dct)
 

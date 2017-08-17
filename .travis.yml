@@ -7,17 +7,15 @@ cache:
 matrix:
   include:
   - python: "2.7"
-    env: TEST_ARGS="-E 'not integration'"
+    env: TEST_ARGS="-E unit"
   - python: "3.5"
-    env: TEST_ARGS="-E 'not integration'"
-  - python: "2.7"
-    env:
-     - YOUTRACK_TEST_SERVER_VERSION=7.0.29566
-     - YOUTRACK_TEST_SERVER_TIMEOUT=240
+    env: TEST_ARGS="-E unit"
   - python: "2.7"
     env:
      - YOUTRACK_TEST_SERVER_VERSION=latest
-     - YOUTRACK_TEST_SERVER_TIMEOUT=240
+  - python: "2.7"
+    env:
+     - YOUTRACK_TEST_SERVER_VERSION=7.0.29566
 script: nose2 --with-cov $TEST_ARGS
 after_success:
     - codecov

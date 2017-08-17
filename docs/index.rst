@@ -1,22 +1,16 @@
-Python YouTrack
-================
+.. include:: readme.rst
 
-Contents:
-
+Contents
+--------
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 1
 
-   readme
-   installation
-   usage
-   api
-   contributing
-   authors
-   history
+    usage
+    installation
+    api
+    contributing
+    authors
+    history
 
-Indices and tables
-==================
+.. include:: usage.rst
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

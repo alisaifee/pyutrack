@@ -113,7 +113,7 @@ class Connection(object):
         if base_url:
             self.api_url = base_url
 
-    def login(self):
+    def login(self, persist_credentials=True):
         try:
             self.post(
                 'user/login', {
@@ -122,7 +122,8 @@ class Connection(object):
                 }, False
             )
             self.credentials.cookies = self.__session.cookies.get_dict()
-            self.credentials.persist()
+            if persist_credentials:
+                self.credentials.persist()
             return True
         except (PermissionsError, ) as e:
             raise LoginError(e)
@@ -167,7 +168,6 @@ class Connection(object):
 
     @fix_auth
     def put(self, path, data, parse=True):
-        print(data)
         return self.__unwrap(
             self.__session.put(
                 '%s/%s' % (self.__api_url, path), data, **self.__session_args

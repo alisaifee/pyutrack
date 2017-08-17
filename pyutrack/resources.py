@@ -8,6 +8,7 @@ from pyutrack.util import Type
 class Permission(object):
     __list__ = {'url': 'admin/permission', 'hydrate': False}
     __render__ = ('name', 'description')
+    __label__ = '%(name)s'
 
 
 @six.add_metaclass(Type)
@@ -28,6 +29,7 @@ class Role(object):
         'args': ('description', 'newName')
     }
     __list__ = {'url': 'admin/role', 'hydrate': True}
+    __label__ = '%(name)s'
     __render__ = ('name', 'description')
     __associations__ = {
         'permissions': {
@@ -69,7 +71,7 @@ class Group(object):
     }
     __list__ = {'url': 'admin/group', 'hydrate': True}
     __render__ = ('name', 'description', 'autoJoin')
-
+    __label__ = '%(name)s'
     __associations__ = {
         'roles': {
             'type': Role,
@@ -97,11 +99,11 @@ class User(object):
         'url': 'admin/user/%(login)s',
         'args': ('login', 'fullName', 'email', 'password')
     }
-    __delete__ = {'url': 'user/%(login)s'}
+    __delete__ = {'url': 'admin/user/%(login)s'}
     __update__ = {
-        'url': 'admin/user/%(login)s',
-        'args': ('login', ),
+        'url': 'admin/user',
         'kwargs': {
+            'login': '',
             'fullName': '',
             'email': '',
             'password': ''
@@ -120,7 +122,7 @@ class User(object):
             'group': ''
         }
     }
-    __render__ = ('login', 'email')
+    __render__ = ('login', 'email', 'fullName')
     __label__ = '%(name)s'
     __aliases__ = {'name': 'fullName'}
     __associations__ = {
@@ -128,7 +130,7 @@ class User(object):
             'type': Group,
             'get': {
                 'url': 'admin/user/%(login)s/group',
-                'hydrate': True
+                'hydrate': False
             },
             'add': {
                 'url': 'admin/user/%(login)s/group/%(group)s',
@@ -212,9 +214,16 @@ class Issue(object):
         'callback': lambda response: response['issue']
     }
     __aliases__ = {'project': 'projectShortName'}
+    __label__ = '%(id)s'
+    __attributes__ = {
+        'id': 'id',
+        'assignee': 'Assignee/0/value',
+        'reporter': 'reporterName',
+        'updater': 'updaterName',
+        'priority': 'Priority',
+    }
     __render__ = (
-        'id', 'summary', 'reporterName', 'updaterName', 'Priority',
-        'issue_links'
+        'id', 'summary', 'assignee', 'reporter', 'updater', 'priority'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
@@ -248,8 +257,9 @@ class Project(object):
     }
     __create__ = {
         'url': 'admin/project/%(projectId)s',
-        'args': ('projectId', 'projectName', 'projectLeadLogin'),
+        'args': ('projectName', 'projectLeadLogin'),
         'kwargs': {
+            'projectId': None,
             'startingNumber': 1,
             'description': ''
         }
@@ -275,5 +285,6 @@ class Project(object):
         'shortName': 'projectId',
         'lead': 'projectLeadLogin'
     }
+    __label__ = '%(id)s'
     __render__ = ('id', 'name', 'lead')
     __render_min__ = ('id', 'name')
