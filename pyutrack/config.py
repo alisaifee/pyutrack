@@ -17,7 +17,8 @@ class Config(object):
         if not os.path.isfile(self.__path):
             return
         self.__config = anyconfig.load(
-            self.__path, ac_parser=not os.path.splitext(self.__path)[1] and 'ini'
+            self.__path,
+            ac_parser=not os.path.splitext(self.__path)[1] and 'ini'
         ).get('pyutrack', {})
 
     def reload(self):

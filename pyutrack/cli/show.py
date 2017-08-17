@@ -46,17 +46,21 @@ def user(ctx, login):
 def group(ctx, name):
     return Group(ctx.obj.connection, hydrate=True, name=name)
 
+
 @show.command()
 @click.pass_context
 @click.argument('name')
 def role(ctx, name):
     return Role(ctx.obj.connection, name=name)
 
+
 @show.command()
 @click.pass_context
 def config(ctx):
-    click.echo("""Base url: %(base_url)s
+    click.echo(
+        """Base url: %(base_url)s
 username: %(username)s""" % {
-        'base_url': ctx.obj.connection.api_url,
-        'username': ctx.obj.connection.credentials.username
-    })
+            'base_url': ctx.obj.connection.api_url,
+            'username': ctx.obj.connection.credentials.username
+        }
+    )

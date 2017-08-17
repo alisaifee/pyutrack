@@ -191,10 +191,12 @@ class Type(type):
             data = kwargs.copy()
             fields = kwargs.keys()
             data.update(
-                {k: self.fields[k] for k in fields if not kwargs[k] and self.fields.get(k)}
+                {
+                    k: self.fields[k]
+                    for k in fields if not kwargs[k] and self.fields.get(k)
+                }
             )
             return data
-
 
         def __delete_endpoint(self):
             return self.__delete__.get('url') % self.fields

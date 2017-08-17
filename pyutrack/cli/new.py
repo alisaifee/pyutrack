@@ -39,7 +39,10 @@ def issue(ctx, project, summary, description):
 @click.pass_context
 @click.argument('id')
 @click.argument('name')
-@click.option('--lead', default=lambda: get_current_context().obj.connection.credentials.username)
+@click.option(
+    '--lead',
+    default=lambda: get_current_context().obj.connection.credentials.username
+)
 def project(ctx, id, name, lead):
     return Project.create(ctx.obj.connection, name, lead, project_id=id)
 
@@ -72,6 +75,7 @@ def group(ctx, name, description, auto_join):
 def role(ctx, name, description):
     return Role.create(ctx.obj.connection, name, description=description)
 
+
 @new.command()
 @click.pass_context
 @click.option('--force', type=click.BOOL, default=False)
@@ -82,13 +86,14 @@ def config(ctx, force, path, base_url=None, username=None):
     """
     cfg = Config(path)
     if not cfg.persisted or force or click.prompt(
-            'This will overwrite the current configuration', type=bool
+        'This will overwrite the current configuration', type=bool
     ):
-        cfg.base_url = click.prompt("Enter base url for youtrack", default=base_url)
+        cfg.base_url = click.prompt(
+            "Enter base url for youtrack", default=base_url
+        )
         username = click.prompt("Enter username", default=username)
         password = click.prompt(
-            "Enter password for %s" % username,
-            hide_input=True
+            "Enter password for %s" % username, hide_input=True
         )
         credentials = Credentials(username, password)
         cfg.credentials = credentials
@@ -97,16 +102,18 @@ def config(ctx, force, path, base_url=None, username=None):
             cfg.persist()
             credentials.persist()
             click.secho('Configuration saved', fg='green')
-        except (Exception, ) as e: # noqa
+        except (Exception, ) as e:  # noqa
             print(e)
             if click.prompt(
                 click.style(
                     "Verification failed. Would you like to try again?",
-                    fg='red')
-                , type=bool
+                    fg='red'
+                ),
+                type=bool
             ):
                 ctx.invoke(
-                    config, force=True,
-                    base_url=cfg.base_url, username=credentials.username
+                    config,
+                    force=True,
+                    base_url=cfg.base_url,
+                    username=credentials.username
                 )
-

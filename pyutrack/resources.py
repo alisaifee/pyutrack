@@ -112,7 +112,8 @@ class User(object):
     __list__ = {
         'url':
         'admin/user?q=%(query)s&role=%(role)s&permission=%(permission)s&group=%(group)s',
-        'hydrate': True,
+        'hydrate':
+        True,
         'kwargs': {
             'project': '',
             'role': '',

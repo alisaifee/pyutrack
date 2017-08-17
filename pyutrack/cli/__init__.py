@@ -31,7 +31,7 @@ def cli(ctx, base_url, username, password, debug):
     if not connection.api_url or not connection.credentials.username:
         ctx.invoke(new.config)
         ctx.obj.config.reload()
-        connection.api_url =  ctx.obj.config.base_url
+        connection.api_url = ctx.obj.config.base_url
         connection.credentials = ctx.obj.config.credentials
     if not (connection.credentials.cookies or connection.credentials.password):
         connection.credentials.password = click.prompt(
