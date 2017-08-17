@@ -44,9 +44,6 @@ def cli(ctx, base_url, username, password, debug):
         connection.api_url = base_url
 
 
-from pyutrack.cli import new, show, update, delete, list
-
-
 class PyutrackContext(object):
     def __init__(self, connection, config, debug=False):
         self.connection = connection
@@ -67,7 +64,6 @@ class PyutrackContext(object):
                 resp = data.format(format, oneline=oneline)
             click.echo(resp)
 
-
 def main():
     config = Config()
     connection = Connection(credentials=config.credentials)
@@ -82,3 +78,6 @@ def main():
         click.secho(str(e), fg='red')
     except (RequestException, CliError) as e:
         click.secho(str(e), fg='red')
+
+# import subcommands
+from pyutrack.cli import new, show, update, delete, list
