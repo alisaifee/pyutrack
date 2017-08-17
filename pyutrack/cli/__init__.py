@@ -1,10 +1,10 @@
-import collections
 import logging
 
 import click
 from requests import RequestException
 
 from pyutrack import Credentials, Connection
+from pyutrack.cli.util import PyutrackContext
 from pyutrack.config import Config
 from pyutrack.errors import ApiError, LoginError, ResponseError, CliError
 
@@ -43,26 +43,6 @@ def cli(ctx, base_url, username, password, debug):
     if base_url:
         connection.api_url = base_url
 
-
-class PyutrackContext(object):
-    def __init__(self, connection, config, debug=False):
-        self.connection = connection
-        self.config = config
-        self.debug = debug
-        self.format = None
-
-    def render(self, data, format=None):
-        format = self.format or format
-        oneline = format == 'oneline'
-        line_sep = '\n' if format else '\n\n'
-        if data:
-            if isinstance(data, collections.Iterable):
-                resp = line_sep.join(
-                    k.format(format, oneline=oneline) for k in data
-                )
-            else:
-                resp = data.format(format, oneline=oneline)
-            click.echo(resp)
 
 def main():
     config = Config()

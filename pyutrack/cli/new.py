@@ -2,6 +2,8 @@ import click
 from click import get_current_context
 
 from pyutrack import *
+from pyutrack.cli import update
+from pyutrack.cli.util import admin_command
 from pyutrack.config import Config
 from pyutrack.errors import LoginError
 from . import cli
@@ -25,15 +27,19 @@ def result(result):
 @click.pass_context
 @click.argument('project')
 @click.argument('summary')
-@click.option('--description')
-def issue(ctx, project, summary, description):
+@click.option('--description', help='issue details')
+@click.option('--command', help='command to run after issue is created')
+def issue(ctx, project, summary, description, command):
     """create a new issue"""
-    return Issue.create(
+    issue = Issue.create(
         ctx.obj.connection,
         project=project,
         summary=summary,
         description=description
     )
+    if command:
+        issue.command(command)
+    return issue
 
 
 @new.command()
@@ -44,6 +50,7 @@ def issue(ctx, project, summary, description):
     '--lead',
     default=lambda: get_current_context().obj.connection.credentials.username
 )
+@admin_command
 def project(ctx, id, name, lead):
     """create a new project"""
     return Project.create(ctx.obj.connection, name, lead, project_id=id)
@@ -56,6 +63,7 @@ def project(ctx, id, name, lead):
 @click.argument('email')
 @click.argument('password')
 @click.option('--group', multiple=True, help='group(s) to add new user to')
+@admin_command
 def user(ctx, login, name, email, password, group):
     """create a new user"""
     user = User.create(
@@ -70,6 +78,7 @@ def user(ctx, login, name, email, password, group):
 @click.option('--description')
 @click.option('--auto-join/--no-auto-join', help='automatically add new users')
 #@click.option('--role', multiple=True, help='role(s) to give new group')
+@admin_command
 def group(ctx, name, description, auto_join, role):
     """create a new group"""
     group = Group.create(
@@ -85,6 +94,7 @@ def group(ctx, name, description, auto_join, role):
 @click.argument('name')
 @click.option('--description')
 @click.option('--permission', multiple=True, help='permission(s) to give new role')
+@admin_command
 def role(ctx, name, description, permission):
     """create a new role"""
     role = Role.create(ctx.obj.connection, name, description=description)

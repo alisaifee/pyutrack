@@ -53,13 +53,14 @@ class Response(dict):
 
 
 class Type(type):
-    class Association(object):
+    class Association(collections.Iterable):
         def __init__(self, type, parent, get_config, add_config, del_config):
             self.type = type
             self.parent = parent
             self.get_config = get_config
             self.add_config = add_config
             self.del_config = del_config
+            self._cache = None
 
         def __iadd__(self, other):
             if not self.add_config:
@@ -74,6 +75,9 @@ class Type(type):
                 method(url % fields, {}, parse=False)
             return self
 
+        def __len__(self):
+            return len(list(self.__iter__()))
+
         def __isub__(self, other):
             if not self.del_config:
                 raise NotImplementedError
@@ -85,18 +89,20 @@ class Type(type):
             return self
 
         def __iter__(self):
-            assoc = self()
-            hydrate = self.get_config.get('hydrate', False)
-            if not isinstance(assoc, collections.Iterable):
-                raise TypeError(
-                    '%s->%s is not iterable' %
-                    (self.parent.__class__.__name__, self.type.__name__)
-                )
-            else:
-                return (
-                    self.type(self.parent.connection, hydrate=hydrate, **v)
-                    for v in assoc
-                )
+            if self._cache is None:
+                assoc = self()
+                hydrate = self.get_config.get('hydrate', False)
+                if not isinstance(assoc, collections.Iterable):
+                    raise TypeError(
+                        '%s->%s is not iterable' %
+                        (self.parent.__class__.__name__, self.type.__name__)
+                    )
+                else:
+                    self._cache = (
+                        self.type(self.parent.connection, hydrate=hydrate, **v)
+                        for v in assoc
+                    )
+            return self._cache
 
         def __call__(self):
             fields = self.parent.fields.copy()

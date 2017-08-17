@@ -1,6 +1,7 @@
 import click
 from click import get_current_context
 from pyutrack import *
+from pyutrack.cli.util import admin_command
 from . import cli
 
 
@@ -36,6 +37,7 @@ def issues(ctx, project, filter, limit):
 
 @list.command()
 @click.pass_context
+@admin_command
 def projects(ctx):
     """list projects"""
     return Project.list(ctx.obj.connection)
@@ -48,6 +50,7 @@ def projects(ctx):
 @click.option('--query', default='', help='query to match users against')
 @click.option('--permission', default='', help='permission name')
 @click.option('--project', default='')
+@admin_command
 def users(ctx, query, group, role, permission, project):
     """
     list users
@@ -65,6 +68,7 @@ def users(ctx, query, group, role, permission, project):
 @list.command()
 @click.pass_context
 @click.option('--user', default=None, help='user login')
+@admin_command
 def groups(ctx, user):
     """
     list groups
@@ -78,6 +82,7 @@ def groups(ctx, user):
 @click.pass_context
 @click.option('--group', default=None, help='group name')
 @click.option('--user', default=None, help='user login')
+@admin_command
 def roles(ctx, group, user):
     """
     list roles
@@ -92,6 +97,7 @@ def roles(ctx, group, user):
 @list.command()
 @click.pass_context
 @click.option('--role', default=None, help='role name')
+@admin_command
 def permissions(ctx, role):
     """
     list permissions
