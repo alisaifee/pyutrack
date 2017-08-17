@@ -4,12 +4,12 @@
 ==================
 Command line usage
 ==================
-The cli is invoked using the `pyu` executable.
+The cli is invoked using the ``pyu`` executable.
 
 Configuration
 -------------
-Before getting started you should configure `pyu`. This can be done manually by
-creating an ini file at `~/.pyutrack` with the following contents:
+Before getting started you should configure ``pyu``. This can be done manually by
+creating an ini file at ``~/.pyutrack`` with the following contents:
 
 .. code-block:: ini
 
@@ -19,18 +19,18 @@ creating an ini file at `~/.pyutrack` with the following contents:
    password = mypassword
 
 
-`password` is optional and if not provided will be prompted for and subsequently
+``password`` is optional and if not provided will be prompted for and subsequently
 persisted to the system keychain.
 
 You can optionally store the config file in a custom location and on subsequent
-invocations of the executable provide the `--config=${CONFIG_LOCATION}` option.
+invocations of the executable provide the ``--config=${CONFIG_LOCATION}`` option.
 
-Lastly, you can interactively generate the configuration by calling `pyu new config`
+Lastly, you can interactively generate the configuration by calling ``pyu new config``
 
 Quick start
 -----------
 All interaction with YouTrack resources is performed around five main sub-commands:
-`new`, `update`, `list`, `show` & `delete`.
+``new``, ``update``, ``list``, ``show`` & ``delete``.
 
 Here's a few examples to get started. For more details on each sub-command refer to `command documentation`_.
 
