@@ -274,9 +274,8 @@ class Type(type):
 
         for attribute, lookup in dct.get('__attributes__', {}).items():
             getter = functools.partial(Type.Base._get_attribute, lookup=lookup)
-            prop = property(getter)
-            prop.__doc__ = attribute
-            dct[attribute] = prop
+            getter.__doc__ = attribute
+            dct[attribute] = property(getter)
 
         return super(Type, mcs).__new__(mcs, name, (mcs.Base, ) + bases, dct)
 
