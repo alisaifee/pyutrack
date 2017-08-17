@@ -24,6 +24,7 @@ def result(result):
 @click.option('--filter', default='')
 @click.option('--limit', default=100)
 def issues(ctx, project, filter, limit):
+    """list issues"""
     if project:
         return Project(
             ctx.obj.connection, id=project
@@ -36,17 +37,21 @@ def issues(ctx, project, filter, limit):
 @list.command()
 @click.pass_context
 def projects(ctx):
+    """list projects"""
     return Project.list(ctx.obj.connection)
 
 
 @list.command()
 @click.pass_context
-@click.option('--group', default='')
-@click.option('--role', default='')
-@click.option('--query', default='')
-@click.option('--permission', default='')
+@click.option('--group', default='', help='group name')
+@click.option('--role', default='', help='role name')
+@click.option('--query', default='', help='query to match users against')
+@click.option('--permission', default='', help='permission name')
 @click.option('--project', default='')
 def users(ctx, query, group, role, permission, project):
+    """
+    list users
+    """
     return User.list(
         ctx.obj.connection,
         query=query,
@@ -59,8 +64,11 @@ def users(ctx, query, group, role, permission, project):
 
 @list.command()
 @click.pass_context
-@click.option('--user', default=None)
+@click.option('--user', default=None, help='user login')
 def groups(ctx, user):
+    """
+    list groups
+    """
     if user:
         return User(ctx.obj.connection, login=user).groups
     return Group.list(ctx.obj.connection)
@@ -68,9 +76,12 @@ def groups(ctx, user):
 
 @list.command()
 @click.pass_context
-@click.option('--group', default=None)
-@click.option('--user', default=None)
+@click.option('--group', default=None, help='group name')
+@click.option('--user', default=None, help='user login')
 def roles(ctx, group, user):
+    """
+    list roles
+    """
     if group:
         return Group(ctx.obj.connection, name=group).roles
     if user:
@@ -80,8 +91,11 @@ def roles(ctx, group, user):
 
 @list.command()
 @click.pass_context
-@click.option('--role', default=None)
+@click.option('--role', default=None, help='role name')
 def permissions(ctx, role):
+    """
+    list permissions
+    """
     if role:
         return Role(ctx.obj.connection, name=role).permissions
     return Permission.list(ctx.obj.connection)
@@ -89,8 +103,11 @@ def permissions(ctx, role):
 
 @list.command()
 @click.pass_context
-@click.option('--issue', default=None)
+@click.option('--issue', default=None, help='issue id')
 def links(ctx, issue):
+    """
+    list issue links
+    """
     if issue:
         return Issue(ctx.obj.connection, id=issue).issue_links
     # lol
