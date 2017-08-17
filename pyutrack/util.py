@@ -1,5 +1,7 @@
 import collections
+import functools
 
+import dpath
 import six
 import pprint
 
@@ -14,28 +16,8 @@ def print_friendly(value, sep=', '):
     return str(value)
 
 
-class Field(object):
-    def __init__(self, data):
-        """
-
-        :param data:
-        """
-        self.name = data['name']
-        self.value = data['value']
-        self.extras = {
-            k: v
-            for k, v in data.items() if k not in ['name', 'value']
-        }
-
-    def __repr__(self):
-        return self.value.__repr__()
-
-    def __str__(self):
-        return print_friendly(self.value)
-
-
 class Response(dict):
-    def __init__(self, data, aliases={}):
+    def __init__(self, data={}, aliases={}):
         """
 
         :param data:
@@ -58,9 +40,8 @@ class Response(dict):
                 for k, v in other.items() if k != 'field'
             }
         )
-        for field in other.get('field', []):
-            f = Field(field)
-            super(Response, self).update({f.name: f})
+        for f in other.get('field', []):
+            super(Response, self).update({f['name']: f['value']})
 
     def __getitem__(self, item):
         return super(Response,
@@ -143,16 +124,11 @@ class Type(type):
                     self.__get__.get('callback', lambda response: response)
                 )
 
-        def __getattribute__(self, item):
-            data = super(Type.Base, self).__getattribute__('fields')
+        def _get_attribute(self, lookup):
             try:
-                return data[item]
-            except (KeyError, ):
-                return super(Type.Base, self).__getattribute__(item)
-
-        def __setattr__(self, key, value):
-            data = super(Type.Base, self).__getattribute__('fields')
-            data[key] = value
+                return dpath.util.get(self.fields, lookup)
+            except KeyError:
+                return None
 
         def _update(self, callback, **kwargs):
             resource_data = self.__update_data(kwargs)
@@ -241,11 +217,11 @@ class Type(type):
                     str(data_source.get(k, getattr(self, k))) for k in fields
                 )
             else:
-                fields = self.__render__ if not template else self.fields.keys() + self.__associations__.keys() if template == 'all' else template
+                fields = template or self.__render__
                 resp = ''
                 for k in fields:
                     label = stringcase.sentencecase(k).ljust(20)
-                    value = data_source.get(k, getattr(self, k))
+                    value = data_source.get(k, getattr(self, k, None))
                     resp += "%s : %s\n" % (label, print_friendly(value))
                 return resp
 
@@ -284,6 +260,7 @@ class Type(type):
                 )
                 fn.__doc__ = '%s %s' % (verb, name.lower())
                 dct[verb] = classmethod(fn)
+
         for association, params in dct.get('__associations__', {}).items():
             fn = Type.__build_func(
                 'get_association', (),
@@ -294,6 +271,12 @@ class Type(type):
             prop.__doc__ = '%s %s' % (name.lower(), association)
             dct[association] = property(prop)
             dct["get_%s" % association] = fn
+
+        for attribute, lookup in dct.get('__attributes__', {}).items():
+            getter = functools.partial(Type.Base._get_attribute, lookup=lookup)
+            prop = property(getter)
+            prop.__doc__ = attribute
+            dct[attribute] = prop
 
         return super(Type, mcs).__new__(mcs, name, (mcs.Base, ) + bases, dct)
 

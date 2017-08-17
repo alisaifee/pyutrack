@@ -11,14 +11,18 @@ class Config(object):
     def __init__(self, path=DEFAULT_PATH):
         self.__config = {}
         self.__path = path
-        self.__load(path, allow_not_exist=path == self.DEFAULT_PATH)
+        self.__load()
 
-    def __load(self, path, allow_not_exist):
-        if allow_not_exist and not os.path.isfile(path):
+    def __load(self):
+        if not os.path.isfile(self.__path):
             return
         self.__config = anyconfig.load(
-            path, ac_parser=not os.path.splitext(path)[1] and 'ini'
+            self.__path, ac_parser=not os.path.splitext(self.__path)[1] and 'ini'
         ).get('pyutrack', {})
+
+    def reload(self):
+        self.__load()
+        return self
 
     def persist(self):
         anyconfig.dump({'pyutrack': self.__config}, self.__path, 'ini')

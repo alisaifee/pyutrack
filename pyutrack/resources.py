@@ -214,8 +214,15 @@ class Issue(object):
     }
     __aliases__ = {'project': 'projectShortName'}
     __label__ = '%(id)s'
+    __attributes__ = {
+        'id': 'id',
+        'assignee': 'Assignee/0/value',
+        'reporter': 'reporterName',
+        'updater': 'updaterName',
+        'priority': 'Priority',
+    }
     __render__ = (
-        'id', 'summary', 'assignee', 'reporterName', 'updaterName', 'Priority'
+        'id', 'summary', 'assignee', 'reporter', 'updater', 'priority'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
