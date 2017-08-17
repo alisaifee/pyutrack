@@ -99,7 +99,7 @@ class User(object):
         'url': 'admin/user/%(login)s',
         'args': ('login', 'fullName', 'email', 'password')
     }
-    __delete__ = {'url': 'user/%(login)s'}
+    __delete__ = {'url': 'admin/user/%(login)s'}
     __update__ = {
         'url': 'admin/user',
         'kwargs': {

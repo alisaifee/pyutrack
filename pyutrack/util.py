@@ -105,6 +105,13 @@ class Type(type):
             return self.get_config.get('callback', lambda r: r
                                        )(self.parent.connection.get(url))
 
+    class AssociationProperty(object):
+        def __init__(self, binding):
+            self.binding = binding
+
+        def __get__(self, instance, obj_type):
+            return self.binding(instance)
+
     class Base(object):
         __aliases__ = {}
 
@@ -269,9 +276,8 @@ class Type(type):
                 params.get('get', {}).get('kwargs', {}), {'params': params}
             )
             fn.__doc__ = 'get %s %s' % (name.lower(), association)
-            prop = fn
-            prop.__doc__ = '%s %s' % (name.lower(), association)
-            dct[association] = property(prop)
+            dct[association] = Type.AssociationProperty(fn)
+            dct[association].__doc__ = '%s %s' % (name.lower(), association)
             dct["get_%s" % association] = fn
 
         for attribute, lookup in dct.get('__attributes__', {}).items():
