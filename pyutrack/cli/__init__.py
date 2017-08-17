@@ -17,7 +17,7 @@ from pyutrack.errors import ApiError, LoginError, ResponseError, CliError
 @click.pass_context
 def cli(ctx, base_url, username, password, debug):
     """
-    YouTrack
+    YouTrack command line interface
     """
     connection = ctx.obj.connection
     ctx.obj.debug = debug
