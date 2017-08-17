@@ -55,31 +55,41 @@ def project(ctx, id, name, lead):
 @click.argument('name')
 @click.argument('email')
 @click.argument('password')
-def user(ctx, login, name, email, password):
+@click.option('--group', multiple=True, help='group(s) to add new user to')
+def user(ctx, login, name, email, password, group):
     """create a new user"""
-    return User.create(ctx.obj.connection, login, name, email, password)
-
+    user = User.create(
+        ctx.obj.connection, login, name, email, password
+    )
+    user.groups += group
+    return user
 
 @new.command()
 @click.pass_context
 @click.argument('name')
 @click.option('--description')
 @click.option('--auto-join/--no-auto-join', help='automatically add new users')
-def group(ctx, name, description, auto_join):
+#@click.option('--role', multiple=True, help='role(s) to give new group')
+def group(ctx, name, description, auto_join, role):
     """create a new group"""
-    return Group.create(
+    group = Group.create(
         ctx.obj.connection, name, description=description, auto_join=auto_join
     )
+    #if role:
+    #    group.roles += role
+    return group
 
 
 @new.command()
 @click.pass_context
 @click.argument('name')
 @click.option('--description')
-def role(ctx, name, description):
+@click.option('--permission', multiple=True, help='permission(s) to give new role')
+def role(ctx, name, description, permission):
     """create a new role"""
-    return Role.create(ctx.obj.connection, name, description=description)
-
+    role = Role.create(ctx.obj.connection, name, description=description)
+    if permission:
+        role.permissions += permission
 
 @new.command()
 @click.pass_context
