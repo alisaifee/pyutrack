@@ -78,7 +78,7 @@ def user(ctx, login, name, email, password, group):
 @click.option('--auto-join/--no-auto-join', help='automatically add new users')
 #@click.option('--role', multiple=True, help='role(s) to give new group')
 @admin_command
-def group(ctx, name, description, auto_join, role):
+def group(ctx, name, description, auto_join):
     """create a new group"""
     group = Group.create(
         ctx.obj.connection, name, description=description, auto_join=auto_join

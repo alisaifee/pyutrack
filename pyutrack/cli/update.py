@@ -52,10 +52,7 @@ def issue(ctx, id, summary, description, command):
 #    'remove_roles', '-role', multiple=True, help='remove role from user'
 #)
 @admin_command
-def user(
-    ctx, login, add_groups, remove_groups, add_roles, remove_roles, name,
-    email, password
-):
+def user(ctx, login, name, email, password, add_groups, remove_groups):
     """update a user"""
     user = User(ctx.obj.connection, hydrate=True, login=login)
     if name or email or password:
@@ -74,7 +71,7 @@ def user(
 # #@click.option('add_roles', '+role', multiple=True)
 # @click.option('remove_roles', '-role', multiple=True)
 @admin_command
-def group(ctx, name, add_roles, remove_roles):
+def group(ctx, name):
     """update a group"""
     group = Group(ctx.obj.connection, hydrate=True, name=name)
     return group
