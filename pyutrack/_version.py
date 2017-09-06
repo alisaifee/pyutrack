@@ -42,8 +42,8 @@ def get_config():
     cfg.VCS = "git"
     cfg.style = "pep440"
     cfg.tag_prefix = ""
-    cfg.parentdir_prefix = "flask-limiter-"
-    cfg.versionfile_source = "flask_limiter/_version.py"
+    cfg.parentdir_prefix = "pyutrack-"
+    cfg.versionfile_source = "pyutrack/_version.py"
     cfg.verbose = False
     return cfg
 
