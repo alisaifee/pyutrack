@@ -9,6 +9,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 import os
+import versioneer
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
 REQUIREMENTS = [
@@ -19,7 +20,6 @@ REQUIREMENTS = [
 
 setup(
     name='pyutrack',
-    version='0.1.0',
     description="Command line utility to interface with YouTrack",
     long_description=readme + '\n\n' + history,
     author="Ali-Akber Saifee",
@@ -36,6 +36,8 @@ setup(
     license="MIT license",
     zip_safe=False,
     keywords='pyutrack',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
