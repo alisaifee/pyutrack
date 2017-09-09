@@ -223,7 +223,7 @@ class Issue(object):
         'priority': 'Priority',
     }
     __render__ = (
-        'id', 'summary', 'assignee', 'reporter', 'updater', 'priority'
+        'id', 'summary', 'assignee', 'reporter', 'updater', 'priority', 'link'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
@@ -234,6 +234,10 @@ class Issue(object):
             }
         }
     }
+
+    @property
+    def link(self):
+        return "https://%s/issue/%s" % (self.connection.host, self.id)
 
     def command(self, command):
         """
