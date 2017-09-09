@@ -7,6 +7,8 @@ import pprint
 
 import stringcase
 
+from pyutrack.logger import get_logger
+
 
 def print_friendly(value, sep=', '):
     if isinstance(value, six.string_types):
@@ -33,23 +35,31 @@ class Response(dict):
         :param other:
         :return:
         """
-        if not other: return
+        if not other:
+            return
         super(Response, self).update(
             {
-                self.__aliases.get(k, k): v
+                self.__resolve_alias(k): v
                 for k, v in other.items() if k != 'field'
             }
         )
         for f in other.get('field', []):
             super(Response, self).update({f['name']: f['value']})
 
+    def __resolve_alias(self, key):
+        while key in self.__aliases:
+            key = self.__aliases[key]
+        return key
+
     def __getitem__(self, item):
-        return super(Response,
-                     self).__getitem__(self.__aliases.get(item, item))
+        return super(Response, self).__getitem__(
+            self.__resolve_alias(item)
+        )
 
     def __setitem__(self, item, value):
-        return super(Response,
-                     self).__setitem__(self.__aliases.get(item, item), value)
+        return super(Response, self).__setitem__(
+            self.__resolve_alias(item), value
+        )
 
 
 class Type(type):
@@ -140,9 +150,9 @@ class Type(type):
 
         def _get_attribute(self, lookup):
             try:
-                return dpath.util.get(self.fields, lookup)
+                return self.fields[lookup]
             except KeyError:
-                return None
+                return dpath.util.get(self.fields, lookup)
 
         def _update(self, callback, **kwargs):
             resource_data = self.__update_data(kwargs)
@@ -236,9 +246,15 @@ class Type(type):
                 fields = template or self.__render__
                 resp = ''
                 for k in fields:
-                    label = stringcase.sentencecase(k).ljust(20)
-                    value = data_source.get(k, getattr(self, k, None))
-                    resp += "%s : %s\n" % (label, print_friendly(value))
+                    try:
+                        label = stringcase.sentencecase(k).ljust(20)
+                        value = data_source.get(k, getattr(self, k, None))
+                        resp += "%s : %s\n" % (label, print_friendly(value))
+                    except KeyError:
+                        get_logger().debug(
+                            "No %s attribute found for %s",
+                            k, self.__class__.__name__
+                        )
                 return resp
 
         def __repr__(self):

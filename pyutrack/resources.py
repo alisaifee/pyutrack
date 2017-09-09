@@ -269,7 +269,7 @@ class Project(object):
         }
     }
     __delete__ = {'url': 'admin/project/%(projectId)s'}
-    __list__ = {'url': 'project/all', 'hydrate': True}
+    __list__ = {'url': 'project/all?verbose=true', 'hydrate': False}
 
     __associations__ = {
         'issues': {
@@ -284,11 +284,16 @@ class Project(object):
             }
         }
     }
+    __attributes__ = {
+        'id': 'id',
+        'lead': 'lead',
+        'description': 'description',
+    }
     __aliases__ = {
-        'id': 'projectId',
+        'id': 'shortName',
         'shortName': 'projectId',
         'lead': 'projectLeadLogin'
     }
     __label__ = '%(id)s'
-    __render__ = ('id', 'name', 'lead')
+    __render__ = ('id', 'name', 'description', 'lead')
     __render_min__ = ('id', 'name')
