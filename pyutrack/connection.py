@@ -1,9 +1,13 @@
 import json
+from six.moves import urllib
 
 import keyring
 import requests
 
-from pyutrack.errors import response_to_exc, AuthorizationError, LoginError, PermissionsError, ResponseError
+from pyutrack.errors import (
+    response_to_exc, AuthorizationError, LoginError,
+    PermissionsError, ResponseError
+)
 
 
 class Credentials(object):
@@ -107,6 +111,7 @@ class Connection(object):
         self.__session.headers.update({'Accept': 'application/json'})
         self.__session_args = {}
         self.__credentials = credentials
+        self.__host = None
         if self.credentials and self.credentials.cookies:
             self.__session.cookies.update(credentials.cookies)
         self.__api_url = ''
@@ -149,6 +154,11 @@ class Connection(object):
             self.__api_url = ref
         else:
             self.__api_url = '%s/rest' % ref
+        self.__host = urllib.parse.urlparse(self.__api_url).netloc
+
+    @property
+    def host(self):
+        return self.__host
 
     @fix_auth
     def get(self, path, parse=True):
