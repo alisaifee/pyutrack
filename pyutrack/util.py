@@ -18,6 +18,17 @@ def print_friendly(value, sep=', '):
     return str(value)
 
 
+def remove_empty_querystring(url):
+    parsed = six.moves.urllib.parse.urlparse(url)
+    new_query = six.moves.urllib.parse.urlencode(
+        six.moves.urllib.parse.parse_qsl(parsed.query)
+    )
+    return six.moves.urllib.parse.ParseResult(
+        scheme=parsed.scheme, netloc=parsed.netloc, path=parsed.path,
+        params=parsed.params, query=new_query, fragment=None
+    ).geturl()
+
+
 class Response(dict):
     def __init__(self, data={}, aliases={}):
         """
@@ -82,7 +93,7 @@ class Type(type):
             )
             for item in other:
                 fields.update({self.add_config.get('key'): item})
-                method(url % fields, {}, parse=False)
+                method(remove_empty_querystring(url % fields), {}, parse=False)
             return self
 
         def __len__(self):
@@ -95,7 +106,9 @@ class Type(type):
             fields = self.parent.fields.copy()
             for item in other:
                 fields.update({self.del_config.get('key'): item})
-                self.parent.connection.delete(url % fields)
+                self.parent.connection.delete(
+                    remove_empty_querystring(url % fields)
+                )
             return self
 
         def __iter__(self):
@@ -118,9 +131,10 @@ class Type(type):
         def __call__(self):
             fields = self.parent.fields.copy()
             fields.update(self.get_config.get('kwargs', {}))
-            url = self.get_config.get('url') % fields
-            return self.get_config.get('callback', lambda r: r
-                                       )(self.parent.connection.get(url))
+            url = remove_empty_querystring(self.get_config.get('url') % fields)
+            return self.get_config.get(
+                'callback', lambda r: r
+            )(self.parent.connection.get(url))
 
     class AssociationProperty(object):
         def __init__(self, binding):
@@ -202,14 +216,21 @@ class Type(type):
             )
 
         def __get_endpoint(self):
-            return self.__get__.get('url') % self.fields
+            return remove_empty_querystring(
+                self.__get__.get('url') % self.fields
+            )
 
         @classmethod
         def __create_endpoint(cls, **kwargs):
-            return cls.__create__.get('url') % kwargs
+            return remove_empty_querystring(
+                self.__create__.get('url') % kwargs
+            )
 
         def __update_endpoint(self):
-            return self.__update__.get('url') % self.fields
+            return remove_empty_querystring(
+                self.__update__.get('url') % self.fields
+            )
+
 
         def __update_data(self, kwargs):
             data = kwargs.copy()
