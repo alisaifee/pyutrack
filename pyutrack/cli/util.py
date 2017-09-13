@@ -35,10 +35,9 @@ class PyutrackContext(object):
             resp = data.format(format, oneline=oneline)
         if self.watch and self.watch > 0:
             click.clear()
-            current_command = click.get_current_context().invoked_subcommand
             click.secho(
                 "pyu watching command: %s, every %d seconds" % (
-                    current_command, self.watch
+                    " ".join(sys.argv[1:]), self.watch
                 ), fg='yellow'
             )
         click.echo(resp)
