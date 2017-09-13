@@ -1,6 +1,9 @@
 import logging
 
 import click
+import time
+
+import sys
 from requests import RequestException
 
 from pyutrack import Credentials, Connection
@@ -14,13 +17,19 @@ from pyutrack.errors import ApiError, LoginError, ResponseError, CliError
 @click.option('--username', help='username to access youtrack as')
 @click.option('--password', help='password for current user')
 @click.option('--debug/--no-debug', help='enable/disable verbose logging')
+@click.option(
+    '--watch',
+    type=click.INT,
+    help='watch the output of the command and run repeatedly every `n` seconds'
+)
 @click.pass_context
-def cli(ctx, base_url, username, password, debug):
+def cli(ctx, base_url, username, password, debug, watch):
     """
     YouTrack command line interface
     """
     connection = ctx.obj.connection
     ctx.obj.debug = debug
+    ctx.obj.watch = watch
     if debug:
         logging.basicConfig(level=logging.DEBUG)
     if base_url:
@@ -45,20 +54,28 @@ def cli(ctx, base_url, username, password, debug):
 
 
 def main():
-    config = Config()
-    connection = Connection(credentials=config.credentials)
-    if config.base_url:
-        connection.api_url = config.base_url
+    context = None
     try:
-        cli(
-            obj=PyutrackContext(connection, config),
-            auto_envvar_prefix='YOUTRACK'
-        )
-    except (ApiError, LoginError, ResponseError, CliError) as e:
-        click.secho(str(e), fg='red')
-    except (RequestException, CliError) as e:
-        click.secho(str(e), fg='red')
-
+       config = Config()
+       connection = Connection(credentials=config.credentials)
+       if config.base_url:
+           connection.api_url = config.base_url
+       context = PyutrackContext(connection, config)
+       try:
+           cli(
+               obj=context,
+               auto_envvar_prefix='YOUTRACK'
+           )
+       except (ApiError, LoginError, ResponseError, CliError) as e:
+           click.secho(str(e), fg='red')
+       except (RequestException, CliError) as e:
+           click.secho(str(e), fg='red')
+    except (SystemExit, ) as e:
+        if e.code == 0 and context and context.watch and context.watch > 0:
+            time.sleep(context.watch)
+            main()
+        else:
+            raise e
 
 # import subcommands
 from pyutrack.cli import new, show, update, delete, list

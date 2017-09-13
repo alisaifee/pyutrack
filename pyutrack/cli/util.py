@@ -1,6 +1,8 @@
 import collections
 
 import click
+import six
+import sys
 
 
 def admin_command(fn):
@@ -14,6 +16,7 @@ class PyutrackContext(object):
         self.config = config
         self.debug = debug
         self.format = None
+        self.watch = None
 
     def render(self, data, format=None):
         format = self.format or format
@@ -30,4 +33,12 @@ class PyutrackContext(object):
             )
         elif data:
             resp = data.format(format, oneline=oneline)
+        if self.watch and self.watch > 0:
+            click.clear()
+            current_command = click.get_current_context().invoked_subcommand
+            click.secho(
+                "pyu watching command: %s, every %d seconds" % (
+                    current_command, self.watch
+                ), fg='yellow'
+            )
         click.echo(resp)

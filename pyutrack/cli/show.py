@@ -68,10 +68,8 @@ def role(ctx, name):
 @click.pass_context
 def config(ctx):
     """show current cli configuration"""
-    click.echo(
-        """Base url: %(base_url)s
+    return """Base url: %(base_url)s
 username: %(username)s""" % {
             'base_url': ctx.obj.connection.api_url,
             'username': ctx.obj.connection.credentials.username
         }
-    )
