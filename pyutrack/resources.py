@@ -221,9 +221,11 @@ class Issue(object):
         'reporter': 'reporterName',
         'updater': 'updaterName',
         'priority': 'Priority',
+        'status': 'Status'
     }
     __render__ = (
-        'id', 'summary', 'assignee', 'reporter', 'updater', 'priority', 'link'
+        'id', 'summary', 'status', 'assignee', 'reporter', 'updater',
+        'priority', 'link'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
