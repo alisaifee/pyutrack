@@ -19,7 +19,10 @@ class PyutrackContext(object):
         format = self.format or format
         oneline = format == 'oneline'
         line_sep = '\n' if format else '\n\n'
-        if isinstance(data, collections.Iterable):
+        resp = ''
+        if isinstance(data, six.string_types):
+            resp = data
+        elif isinstance(data, collections.Iterable):
             resp = line_sep.join(
                 k.format(format, oneline=oneline) for k in data
             ) if len(data) > 0 else click.style(
