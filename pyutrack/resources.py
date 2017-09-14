@@ -241,7 +241,7 @@ class Issue(object):
     def link(self):
         return "%s/issue/%s" % (self.connection.base_url, self.id)
 
-    def command(self, command):
+    def command(self, command=None, comment=None):
         """
         executes a command for the given issue.
 
@@ -252,7 +252,9 @@ class Issue(object):
         url = 'issue/%(id)s/execute' % {
             'id': self.id,
         }
-        self.connection.post(url, {'command': command}, parse=False)
+        self.connection.post(
+            url, {'command': command, 'comment': comment}, parse=False
+        )
         self.get()
 
 

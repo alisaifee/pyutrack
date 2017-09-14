@@ -27,11 +27,12 @@ def result(result):
 @click.option('--summary')
 @click.option('--description')
 @click.option('--command', help='command to apply to issue.')
-def issue(ctx, id, summary, description, command):
+@click.option('--comment', help='comment to add to issue')
+def issue(ctx, id, summary, description, command, comment):
     """update an issue"""
     issue = Issue(ctx.obj.connection, hydrate=False, id=id)
-    if command:
-        issue.command(command)
+    if command or comment:
+        issue.command(command, comment)
     else:
         issue.update(summary=summary, description=description)
     return issue
