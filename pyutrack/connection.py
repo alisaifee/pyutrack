@@ -111,7 +111,7 @@ class Connection(object):
         self.__session.headers.update({'Accept': 'application/json'})
         self.__session_args = {}
         self.__credentials = credentials
-        self.__host = None
+        self.__base_url = None
         if self.credentials and self.credentials.cookies:
             self.__session.cookies.update(credentials.cookies)
         self.__api_url = ''
@@ -154,11 +154,11 @@ class Connection(object):
             self.__api_url = ref
         else:
             self.__api_url = '%s/rest' % ref
-        self.__host = urllib.parse.urlparse(self.__api_url).netloc
+        self.__base_url = self.__api_url.replace('/rest','')
 
     @property
-    def host(self):
-        return self.__host
+    def base_url(self):
+        return self.__base_url
 
     @fix_auth
     def get(self, path, parse=True):

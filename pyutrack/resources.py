@@ -239,7 +239,7 @@ class Issue(object):
 
     @property
     def link(self):
-        return "https://%s/issue/%s" % (self.connection.host, self.id)
+        return "%s/issue/%s" % (self.connection.base_url, self.id)
 
     def command(self, command):
         """
