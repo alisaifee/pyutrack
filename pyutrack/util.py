@@ -112,21 +112,19 @@ class Type(type):
             return self
 
         def __iter__(self):
-            if self._cache is None:
-                assoc = self()
-                hydrate = self.get_config.get('hydrate', False)
-                if not isinstance(assoc, collections.Iterable):
-                    raise TypeError(
-                        '%s->%s is not iterable' %
-                        (self.parent.__class__.__name__, self.type.__name__)
+            if not self._cache:
+                self._cache = self()
+            hydrate = self.get_config.get('hydrate', False)
+            if not isinstance(self._cache, collections.Iterable):
+                raise TypeError(
+                    '%s->%s is not iterable' %
+                    (self.parent.__class__.__name__, self.type.__name__)
+                )
+            else:
+                for v in self._cache:
+                    yield self.type(
+                        self.parent.connection, hydrate=hydrate, **v
                     )
-                else:
-                    self._cache = (
-                        self.type(
-                            self.parent.connection, hydrate=hydrate, **v
-                        ) for v in assoc
-                    )
-            return self._cache
 
         def __call__(self):
             fields = self.parent.fields.copy()
