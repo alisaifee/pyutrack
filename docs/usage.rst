@@ -102,6 +102,13 @@ Change a user's password
 
    pyu update user some-user --password=new-password
 
+Add a comment to an issue:
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+   pyu update issue PRO-1 --comment='test comment'
+
 Update an issue using a command (`Command Reference`_)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: bash
