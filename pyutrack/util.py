@@ -221,7 +221,7 @@ class Type(type):
         @classmethod
         def __create_endpoint(cls, **kwargs):
             return remove_empty_querystring(
-                self.__create__.get('url') % kwargs
+                cls.__create__.get('url') % kwargs
             )
 
         def __update_endpoint(self):
