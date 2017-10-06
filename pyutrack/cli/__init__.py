@@ -53,29 +53,27 @@ def cli(ctx, base_url, username, password, debug, watch):
         connection.api_url = base_url
 
 
-def main():
-    context = None
+def main(context=None):
+    if not context:
+        config = Config()
+        connection = Connection(credentials=config.credentials)
+        if config.base_url:
+            connection.api_url = config.base_url
+        context = PyutrackContext(connection, config)
     try:
-       config = Config()
-       connection = Connection(credentials=config.credentials)
-       if config.base_url:
-           connection.api_url = config.base_url
-       context = PyutrackContext(connection, config)
-       try:
-           cli(
-               obj=context,
-               auto_envvar_prefix='YOUTRACK'
-           )
-       except (ApiError, LoginError, ResponseError, CliError) as e:
-           click.secho(str(e), fg='red')
-       except (RequestException, CliError) as e:
-           click.secho(str(e), fg='red')
-    except (SystemExit, ) as e:
-        if e.code == 0 and context and context.watch and context.watch > 0:
-            time.sleep(context.watch)
-            main()
-        else:
-            raise e
+        repeat = context.watch and context.watch > 0
+        while True:
+            try:
+                cli(obj=context, auto_envvar_prefix='YOUTRACK')
+            except (SystemExit, ) as e:
+                if e.code ==0 and context.watch and context.watch > 0:
+                    time.sleep(context.watch)
+                else:
+                    raise e
+    except (ApiError, LoginError, ResponseError, CliError) as e:
+        click.secho(str(e), fg='red')
+    except (RequestException, CliError) as e:
+        click.secho(str(e), fg='red')
 
 # import subcommands
 from pyutrack.cli import new, show, update, delete, list
