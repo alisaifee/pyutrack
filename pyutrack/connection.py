@@ -55,18 +55,19 @@ class Credentials(object):
         self._password = value
 
     def load_from_keyring(self):
-        keyring_cookie = keyring.get_password(
-            Credentials.KEYRING_COOKIE, self.username
-        )
-        cookies = json.loads(keyring_cookie) if keyring_cookie else None
-        password = keyring.get_password(
-            Credentials.KEYRING_PASSWORD, self.username
-        )
-        if cookies:
-            self.cookies = cookies
-        if password:
-            self.password = password
-        return cookies or password
+        if self.username:
+            keyring_cookie = keyring.get_password(
+                    Credentials.KEYRING_COOKIE, self.username
+                    )
+            cookies = json.loads(keyring_cookie) if keyring_cookie else None
+            password = keyring.get_password(
+                Credentials.KEYRING_PASSWORD, self.username
+                )
+            if cookies:
+                self.cookies = cookies
+            if password:
+                self.password = password
+            return cookies or password
 
     def persist(self):
         if self.cookies:
