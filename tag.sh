@@ -11,7 +11,7 @@ echo $new_changelog_heading_sep >> $changelog_file
 python -c "print open('HISTORY.rst').read().replace('$last_portion', open('$changelog_file').read() +'\n' +  '$last_portion')" > HISTORY.rst.new 
 cp HISTORY.rst.new HISTORY.rst 
 vim HISTORY.rst
-if rst2html.py HISTORY.rst > /dev/null 
+if rst2html HISTORY.rst > /dev/null
 then
     echo "tagging $new_version"
     git add HISTORY.rst 
