@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Run this script like this:
+#
+#   $ yt-find-stories-no-tasks | sort -r > issues.md
+#
+
+query='Type: Story and Affected versions: v1.0 and (State: Open or State: Reopened or State:{To Be Discussed} or State:Committed or State:{In Progress} or State:{In Progress})'
+
+issues=`pyu list issues --filter="$query" | grep Id | cut -d':' -f 2`
+
+#echo "Starting Issue set from query $query :"
+#echo $issues
+#echo
+#echo "Matching stories:"
+for issue in $issues; do
+  #echo "Examining story $issue .."
+  links=`pyu list links --issue $issue`
+  re='Source               : '$issue'[\
+]+Type outward         : parent for'
+  if [[ ! "$links" =~ ${re} ]]; then
+    url=`pyu show issue $issue | grep Link | cut -d':' -f 2-`
+    url=${url// /}
+    echo "Story [$issue]($url) has no tasks.     "
+  fi
+done

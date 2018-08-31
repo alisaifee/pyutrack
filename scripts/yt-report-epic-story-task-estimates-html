@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+# Run this script like this:
+#
+#   $ yt-report-epic-story-task-estimates-html >report.html
+#
+
+query='Type: Epic'
+issues=`pyu list issues --filter="$query" | grep Id | cut -d':' -f 2`
+#echo "Starting Epic set: $issues"
+
+let estimation=0
+for issue in $issues; do
+  #echo "Examining Epic $issue .."
+  issueAttrs="`pyu show issue $issue`"
+  summary=`echo -en "$issueAttrs" | grep Summary | cut -d':' -f 2-`
+  state=`echo -en "$issueAttrs" | grep State | cut -d':' -f 2-`
+  estimationStr=`echo -en "$issueAttrs" | grep Estimation | cut -d':' -f 2-`
+  estimation=0
+  if [ ! -z "$estimationStr" ]; then
+    estimation=`echo "$estimationStr/480" | bc`
+  fi
+  url=`echo -en "$issueAttrs" | grep Link | cut -d':' -f 2-`
+  url=${url// /}
+  echo "<details>"
+  echo "  <summary>Epic <a href=\"$url\">$issue</a> $summary | State: $state <em><strong>Estimation: ${estimation}d</strong></em></summary>"
+
+  # Examine this Epic's child issues.
+  links=`pyu list links --issue $issue`
+  re='Source               : '$issue'[\
+]+Type outward         : parent for'
+  if [[ "$links" =~ ${re} ]]; then
+    #echo "has child issues."
+    # Loop through the child issues of this Epic.
+    childrenOfEpic=`pyu list links --issue $issue | grep Target | grep -v $issue | cut -d':' -f 2`
+    for childOfEpic in $childrenOfEpic; do
+      childOfEpicAttrs="`pyu show issue $childOfEpic`"	
+      childOfEpicType=`echo -en "$childOfEpicAttrs" | grep Type |cut -d':' -f 2`
+      childOfEpicType=${childOfEpicType// /}
+      if [ "$childOfEpicType" == "Story" ]; then
+        summary=`echo -en "$childOfEpicAttrs" | grep Summary | cut -d':' -f 2-`
+        state=`echo -en "$childOfEpicAttrs" | grep State | cut -d':' -f 2-`
+	estimationStr=`echo -en "$childOfEpicAttrs" | grep Estimation | cut -d':' -f 2-`
+        estimation=0
+        if [ ! -z "$estimationStr" ]; then
+          estimation=`echo "$estimationStr/480" | bc`
+        fi
+        url=`echo -en "$childOfEpicAttrs" | grep Link | cut -d':' -f 2-`
+        url=${url// /}
+	echo "<details>"
+	echo "  <summary>&nbsp;&nbsp;&nbsp;&nbsp;Story <a href=\"$url\">$childOfEpic</a> $summary | State: $state <em><strong>Estimation: ${estimation}d</strong></em></summary>"
+
+	# Examine this Story's child issues.
+	links=`pyu list links --issue $childOfEpic`
+	re='Source               : '$issue'[\
+]+Type outward         : parent for'
+	if [[ "$links" =~ ${re} ]]; then
+	  #echo "has child issues."
+	  # Loop through the child issues of this Story.
+          childrenOfStory=`pyu list links --issue $childOfEpic | grep Target | grep -v $childOfEpic | cut -d':' -f 2`
+          for childOfStory in $childrenOfStory; do
+	    childOfStoryAttrs=`pyu show issue $childOfStory`
+            childOfStoryType=`echo -en "$childOfStoryAttrs" | grep Type | cut -d':' -f 2`
+            childOfStoryType=${childOfStoryType// /}
+            if [ "$childOfStoryType" == "Task" ]; then
+	      summary=`echo -en "$childOfStoryAttrs" | grep Summary | cut -d':' -f 2-`
+              state=`echo -en "$childOfStoryAttrs" | grep State | cut -d':' -f 2-`
+	      estimationStr=`echo -en "$childOfStoryAttrs" | grep Estimation | cut -d':' -f 2-`
+              estimation=0
+              if [ ! -z "$estimationStr" ]; then
+                estimation=`echo "$estimationStr/480" | bc`
+              fi
+              url=`echo -en "$childOfStoryAttrs" | grep Link | cut -d':' -f 2-`
+              url=${url// /}
+	      
+              echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Task <a href=\"$url\">$childOfStory</a> $summary | State: $state <em><strong>Estimation: ${estimation}d</strong></em></summary><br/>"
+	    
+	    fi
+	  done
+	fi
+	echo "</details>"
+      fi
+    done
+  fi
+  echo "</details>"
+done

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Any Task that has no Estimation but that does have Story points, this script
+# simply copies the Story point number into the Estimation field, with 'd' on
+# the end, meaning it takes that many calendar days.
+#
+# Run this script like this:
+#
+#   $ yt-copy-task-points-to-estimation
+#
+
+query='Type: Task and Affected versions: v1.0 and (Estimation: {No Estimation} or Estimation:?) and Story points:-{Not estimated} and (State: Open or State: Reopened or State:{To Be Discussed} or State:Committed or State:{In Progress})'
+
+issues=`pyu list issues --filter="$query" | grep Id | cut -d':' -f 2`
+echo "Starting Issue set from query $query :"
+echo $issues
+
+for issue in $issues; do
+  echo "Task $issue .."
+  storyPoints=`pyu show issue $issue | grep Story\ points | cut -d':' -f 2`
+  storyPoints=${storyPoints// /}
+  echo "              updating Estimation=${storyPoints}d"
+  pyu update issue $issue --command='Estimation: '$storyPoints'd'
+  echo "Task $issue updated."
+done
