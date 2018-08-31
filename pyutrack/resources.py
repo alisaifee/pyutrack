@@ -217,15 +217,18 @@ class Issue(object):
     __label__ = '%(id)s'
     __attributes__ = {
         'id': 'id',
+        'type': 'Type',
         'assignee': 'Assignee/0/value',
         'reporter': 'reporterName',
         'updater': 'updaterName',
         'priority': 'Priority',
-        'status': 'Status'
+        'state': 'State',
+        'estimation': 'Estimation',
+        'Story points': 'Story points'
     }
     __render__ = (
-        'id', 'summary', 'status', 'assignee', 'reporter', 'updater',
-        'priority', 'link'
+        'id', 'summary', 'type', 'state', 'assignee', 'reporter', 'updater',
+        'priority', 'estimation', 'Story points', 'link'
     )
     __render_min__ = ('id', 'summary')
     __associations__ = {
