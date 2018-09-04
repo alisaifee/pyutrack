@@ -5,6 +5,18 @@
 #   $ yt-find-stories-no-tasks | sort -r > issues.md
 #
 
+trim() {
+  local str=$1
+
+  # Remove leading whitespace characters.
+  str="${str#"${str%%[![:space:]]*}"}"
+
+  # Remove trailing whitespace characters.
+  str="${str%"${str##*[![:space:]]}"}"
+
+  echo -n "$str"
+}
+
 query='Type: Story and Affected versions: v1.0 and (State: Open or State: Reopened or State:{To Be Discussed} or State:Committed or State:{In Progress} or State:{In Progress})'
 
 issues=`pyu list issues --filter="$query" | grep Id | cut -d':' -f 2`
@@ -19,8 +31,11 @@ for issue in $issues; do
   re='Source               : '$issue'[\
 ]+Type outward         : parent for'
   if [[ ! "$links" =~ ${re} ]]; then
-    url=`pyu show issue $issue | grep Link | cut -d':' -f 2-`
+    storyAttrs="`pyu show issue $issue`"
+    summary=`echo -en "$storyAttrs" | grep Summary | cut -d':' -f 2-`
+    summary=`trim "$summary"`
+    url=`echo -en "$storyAttrs" | grep Link | cut -d':' -f 2-`
     url=${url// /}
-    echo "Story [$issue]($url) has no tasks.     "
+    echo "Story [$issue]($url) ${summary}     "
   fi
 done

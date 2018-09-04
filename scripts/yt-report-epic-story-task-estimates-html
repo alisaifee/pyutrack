@@ -11,6 +11,7 @@ issues=`pyu list issues --filter="$query" | grep Id | cut -d':' -f 2`
 
 let estimation=0
 for issue in $issues; do
+  issue=${issue// /}
   #echo "Examining Epic $issue .."
   issueAttrs="`pyu show issue $issue`"
   summary=`echo -en "$issueAttrs" | grep Summary | cut -d':' -f 2-`
@@ -34,12 +35,16 @@ for issue in $issues; do
     # Loop through the child issues of this Epic.
     childrenOfEpic=`pyu list links --issue $issue | grep Target | grep -v $issue | cut -d':' -f 2`
     for childOfEpic in $childrenOfEpic; do
+      childOfEpic=${childOfEpic// /}
       childOfEpicAttrs="`pyu show issue $childOfEpic`"	
       childOfEpicType=`echo -en "$childOfEpicAttrs" | grep Type |cut -d':' -f 2`
       childOfEpicType=${childOfEpicType// /}
       if [ "$childOfEpicType" == "Story" ]; then
         summary=`echo -en "$childOfEpicAttrs" | grep Summary | cut -d':' -f 2-`
         state=`echo -en "$childOfEpicAttrs" | grep State | cut -d':' -f 2-`
+        if [ "$state" == 'Closed' ] || [ "$state" == 'Resolved' ] || [ "$state" == 'Done' ]; then
+	  continue;
+	fi
 	estimationStr=`echo -en "$childOfEpicAttrs" | grep Estimation | cut -d':' -f 2-`
         estimation=0
         if [ ! -z "$estimationStr" ]; then
@@ -59,17 +64,23 @@ for issue in $issues; do
 	  # Loop through the child issues of this Story.
           childrenOfStory=`pyu list links --issue $childOfEpic | grep Target | grep -v $childOfEpic | cut -d':' -f 2`
           for childOfStory in $childrenOfStory; do
+            childOfStory=${childOfStory// /}
 	    childOfStoryAttrs=`pyu show issue $childOfStory`
             childOfStoryType=`echo -en "$childOfStoryAttrs" | grep Type | cut -d':' -f 2`
             childOfStoryType=${childOfStoryType// /}
             if [ "$childOfStoryType" == "Task" ]; then
 	      summary=`echo -en "$childOfStoryAttrs" | grep Summary | cut -d':' -f 2-`
               state=`echo -en "$childOfStoryAttrs" | grep State | cut -d':' -f 2-`
+              if [ "$state" == 'Closed' ] || [ "$state" == 'Resolved' ] || [ "$state" == 'Done' ]; then
+                continue;
+	      fi
 	      estimationStr=`echo -en "$childOfStoryAttrs" | grep Estimation | cut -d':' -f 2-`
               estimation=0
               if [ ! -z "$estimationStr" ]; then
                 estimation=`echo "$estimationStr/480" | bc`
               fi
+	      affectedVersions=`pyu show issue $childOfStory | grep 'Affected versions' | cut -d':' -f 2`
+              affectedVersions=${affectedVersions// /}
               url=`echo -en "$childOfStoryAttrs" | grep Link | cut -d':' -f 2-`
               url=${url// /}
 	      
