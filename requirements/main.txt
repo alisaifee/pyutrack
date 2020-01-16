@@ -4,6 +4,6 @@ dpath==1.4.0
 keyring
 requests==2.18.4
 retry
-six==1.11.0
+six==1.14.0
 stringcase
 pyyaml
