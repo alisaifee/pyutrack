@@ -1,6 +1,6 @@
 anyconfig
 click
-dpath==1.4.0
+dpath==2.0.1
 keyring
 requests==2.18.4
 retry
