@@ -1,6 +1,6 @@
 -r main.txt
 nose2
-mock
+mock==4.0.1
 coverage
 nose-cov
 hiro>0.1.6
