@@ -6,4 +6,4 @@ requests==2.18.4
 retry
 six==1.11.0
 stringcase
-pyyaml
+pyyaml==6.0
