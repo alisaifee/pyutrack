@@ -1,5 +1,5 @@
 anyconfig
-click
+click==8.1.5
 dpath==1.4.0
 keyring
 requests==2.18.4
