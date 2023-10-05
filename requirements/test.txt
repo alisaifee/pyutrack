@@ -1,5 +1,5 @@
 -r main.txt
-nose2
+nose2==0.14.0
 mock
 coverage
 nose-cov
