@@ -1,4 +1,4 @@
-anyconfig
+anyconfig==0.14.0
 click
 dpath==1.4.0
 keyring
