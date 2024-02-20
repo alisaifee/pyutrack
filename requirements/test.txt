@@ -1,6 +1,6 @@
 -r main.txt
 nose2
 mock
-coverage
+coverage==7.4.2
 nose-cov
 hiro>0.1.6
